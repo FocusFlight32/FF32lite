@@ -52,6 +52,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ff32_Naze32.h"
 
+#include "drv_adc.h"
 #include "drv_cli.h"
 #include "drv_gpio.h"
 #include "drv_i2c.h"
@@ -67,6 +68,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "mpu3050.h"
 
 #include "accelCalibration.h"
+#include "batMon.h"
 #include "cli.h"
 #include "computeAxisCommands.h"
 #include "config.h"

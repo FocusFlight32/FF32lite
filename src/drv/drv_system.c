@@ -277,6 +277,7 @@ void systemInit(void)
 
     cliInit(115200);
     gpioInit();
+    adcInit();
 
     LED0_ON;
 
@@ -286,6 +287,8 @@ void systemInit(void)
 
     delay(10000);  // Remaining 10 seconds of 20 second delay for sensor stabilization - probably not long enough..
     LED1_ON;
+
+    batteryInit();
 
     if (eepromConfig.receiverType == SPEKTRUM)
         spektrumInit();

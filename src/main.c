@@ -101,6 +101,8 @@ int main(void)
 
         	cliCom();
 
+        	batMonTick();
+
         	executionTime10Hz = micros() - currentTime;
         }
 
@@ -230,6 +232,12 @@ int main(void)
 			deltaTime5Hz    = currentTime - previous5HzTime;
 			previous5HzTime = currentTime;
 
+			while (batMonVeryLowWarning > 0)
+			{
+				BEEP_TOGGLE;
+				batMonVeryLowWarning--;
+			}
+
         	executionTime5Hz = micros() - currentTime;
         }
 
@@ -254,11 +262,19 @@ int main(void)
 				pwmEscInit();
 			}
 
+			while (batMonLowWarning > 0)
+			{
+				BEEP_TOGGLE;
+				batMonLowWarning--;
+			}
+
 			executionTime1Hz = micros() - currentTime;
         }
 
         ////////////////////////////////
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -227,6 +227,12 @@ typedef struct eepromConfig_t
 
     ///////////////////////////////////
 
+    uint8_t batteryCells;
+    float   voltageMonitorScale;
+    float   voltageMonitorBias;
+
+    ///////////////////////////////////
+
     uint8_t armCount;
     uint8_t disarmCount;
 

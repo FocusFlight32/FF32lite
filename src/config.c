@@ -44,7 +44,7 @@ const char rcChannelLetters[] = "AERT1234";
 
 float vTailThrust;
 
-static uint8_t checkNewEEPROMConf = 3;
+static uint8_t checkNewEEPROMConf = 4;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -286,6 +286,10 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.PID[H_PID].lastLastDterm           =   0.0f;
         eepromConfig.PID[H_PID].dErrorCalc              =   D_ERROR;
         eepromConfig.PID[H_PID].type                    =   OTHER;
+
+		eepromConfig.batteryCells         = 3;
+		eepromConfig.voltageMonitorScale  = 11.0f / 1.0f;
+		eepromConfig.voltageMonitorBias   = 0.0f;
 
         eepromConfig.armCount             =  50;
         eepromConfig.disarmCount          =  0;
