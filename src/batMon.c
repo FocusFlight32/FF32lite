@@ -118,7 +118,7 @@ void batMonVeryLow(void)
 {
     // Need to do fast beeping here, push back in telem to flash controller
     // lights, etc.
-    // User needs to decsend now ...
+    // User needs to descend now ...
 
     evrPush(EVR_BatVeryLow, (int)(v_bat_ave*1000.0));
 

@@ -427,25 +427,14 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'v': // ESC PWM Outputs
-        	cliPrintF("%4ld, ", TIM2->CCR1 );
-        	cliPrintF("%4ld, ", TIM2->CCR2 );
-            cliPrintF("%4ld, ", TIM15->CCR1);
-        	cliPrintF("%4ld, ", TIM15->CCR2);
-        	cliPrintF("%4ld, ", TIM3->CCR1 );
-        	cliPrintF("%4ld\n", TIM3->CCR2 );
+        	cliPrintF("%4ld, ", TIM4->CCR4);
+        	cliPrintF("%4ld, ", TIM4->CCR3);
+            cliPrintF("%4ld, ", TIM4->CCR2);
+        	cliPrintF("%4ld, ", TIM4->CCR1);
+        	cliPrintF("%4ld, ", TIM1->CCR4);
+        	cliPrintF("%4ld\n", TIM1->CCR1);
 
         	validCliCommand = false;
-            break;
-
-        ///////////////////////////////
-
-        case 'w': // Servo PWM Outputs
-        	cliPrintF("%4ld, ", TIM4->CCR1);
-        	cliPrintF("%4ld, ", TIM4->CCR2);
-        	cliPrintF("%4ld, ", TIM4->CCR3);
-        	cliPrintF("%4ld\n", TIM4->CCR4);
-
-            validCliCommand = false;
             break;
 
         ///////////////////////////////
@@ -464,9 +453,9 @@ void cliCom(void)
 
         ///////////////////////////////
 
-        case 'z':
-            // HJI cliPrintF("%5.2f, %5.2f\n", voltageMonitor(),
-            // HJI 		                    adcChannel());
+        case 'z': // Voltage monitor ADC, Battery voltage
+            cliPrintF("%7.2f, %5.2f\n", voltageMonitor(), batteryVoltage);
+
             break;
 
         ///////////////////////////////
@@ -688,7 +677,7 @@ void cliCom(void)
    		    cliPrint("'t' Processed Receiver Commands            'T' Telemetry CLI\n");
    		    cliPrint("'u' Command In Detent Discretes            'U' Not Used\n");
    		    cliPrint("'v' Motor PWM Outputs                      'V' Reset EEPROM Parameters\n");
-   		    cliPrint("'w' Servo PWM Outputs                      'W' Write EEPROM Parameters\n");
+   		    cliPrint("'w' Not Used                               'W' Write EEPROM Parameters\n");
    		    cliPrint("'x' Terminate Serial Communication         'X' Not Used\n");
    		    cliPrint("\n");
 

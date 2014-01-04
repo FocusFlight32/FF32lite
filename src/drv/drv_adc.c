@@ -55,7 +55,16 @@ void adcInit(void)
 
     ///////////////////////////////////
 
+    GPIO_InitStructure.GPIO_Pin   = VBATT_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AIN;
+
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    ///////////////////////////////////
+
     DMA_DeInit(DMA1_Channel1);
+
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
     DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t)adc1ConvertedValues;
     DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralSRC;
@@ -74,11 +83,7 @@ void adcInit(void)
 
     ///////////////////////////////////
 
-    GPIO_InitStructure.GPIO_Pin   = VBATT_PIN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AIN;
-
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
     ///////////////////////////////////
 
@@ -93,10 +98,12 @@ void adcInit(void)
 
     ///////////////////////////////////
 
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  1, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  2, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  3, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  4, ADC_SampleTime_28Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  1, ADC_SampleTime_55Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  2, ADC_SampleTime_55Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  3, ADC_SampleTime_55Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  4, ADC_SampleTime_55Cycles5);
+
+    ADC_DMACmd(ADC1, ENABLE);
 
     ADC_Cmd(ADC1, ENABLE);
 
