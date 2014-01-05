@@ -90,9 +90,9 @@ void sensorCLI()
                 else
                 	cliPrint("Vertical Velocity and Altitude Hold\n\n");
 
-                // HJI cliPrintF("Voltage Monitor Scale:     %9.4f\n", eepromConfig.voltageMonitorScale);
-                // HJI cliPrintF("Voltage Monitor Bias:      %9.4f\n", eepromConfig.voltageMonitorBias);
-                // HJI cliPrintF("Number of Battery Cells:      %1d\n\n", eepromConfig.batteryCells);
+                cliPrintF("Voltage Monitor Scale:     %9.4f\n", eepromConfig.voltageMonitorScale);
+                cliPrintF("Voltage Monitor Bias:      %9.4f\n", eepromConfig.voltageMonitorBias);
+                cliPrintF("Number of Battery Cells:      %1d\n\n", eepromConfig.batteryCells);
 
                 validQuery = false;
                 break;
@@ -186,9 +186,9 @@ void sensorCLI()
             ///////////////////////////
 
             case 'V': // Set Voltage Monitor Parameters
-                // HJI eepromConfig.voltageMonitorScale = readFloatCLI();
-                // HJI eepromConfig.voltageMonitorBias  = readFloatCLI();
-                // HJI eepromConfig.batteryCells        = (uint8_t)readFloatCLI();
+                eepromConfig.voltageMonitorScale = readFloatCLI();
+                eepromConfig.voltageMonitorBias  = readFloatCLI();
+                eepromConfig.batteryCells        = (uint8_t)readFloatCLI();
 
                 sensorQuery = 'a';
                 validQuery = true;
