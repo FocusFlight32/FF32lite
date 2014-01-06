@@ -71,7 +71,24 @@ int main(void)
 
 			processFlightCommands();
 
-			executionTime50Hz = micros() - currentTime;
+            if (eepromConfig.useMs5611 == true)
+			{
+				if (newTemperatureReading && newPressureReading)
+                {
+                    d1Value = d1.value;
+                    d2Value = d2.value;
+
+                    calculateMs5611Temperature();
+                    calculateMs5611PressureAltitude();
+
+                    newTemperatureReading = false;
+                    newPressureReading    = false;
+                }
+
+                sensors.pressureAlt = firstOrderFilter(sensors.pressureAlt, &firstOrderFilters[MS5611_LOWPASS]);
+            }
+
+            executionTime50Hz = micros() - currentTime;
         }
 
         ///////////////////////////////
@@ -91,13 +108,16 @@ int main(void)
 			newMagData = false;
 			magDataUpdate = true;
 
-        	pressureAverage = pressureSum / 10;
-        	pressureSum = 0;
-        	calculateTemperature();
-        	calculatePressureAltitude();
-        	sensors.pressureAlt10Hz = pressureAlt;
+        	if (eepromConfig.useMs5611 == false)
+        	{
+        		pressureAverage = pressureSum / 10;
+        		pressureSum = 0;
+        	    calculateBmp085Temperature();
+        	    calculateBmp085PressureAltitude();
+        	    sensors.pressureAlt = pressureAlt;
 
-        	sensors.pressureAlt10Hz = firstOrderFilter(sensors.pressureAlt10Hz, &firstOrderFilters[PRESSURE_ALT_LOWPASS]);
+        	    sensors.pressureAlt = firstOrderFilter(sensors.pressureAlt, &firstOrderFilters[BMP085_LOWPASS]);
+        	}
 
         	cliCom();
 
@@ -118,18 +138,34 @@ int main(void)
 
        	    dt500Hz = (float)deltaTime500Hz * 0.000001f;  // For integrations in 500 Hz loop
 
-            sensors.accel500Hz[XAXIS] = -((float)accelData500Hz[XAXIS] - accelRTBias[XAXIS] - eepromConfig.accelBias[XAXIS]) * eepromConfig.accelScaleFactor[XAXIS];
-			sensors.accel500Hz[YAXIS] = -((float)accelData500Hz[YAXIS] - accelRTBias[YAXIS] - eepromConfig.accelBias[YAXIS]) * eepromConfig.accelScaleFactor[YAXIS];
-			sensors.accel500Hz[ZAXIS] = -((float)accelData500Hz[ZAXIS] - accelRTBias[ZAXIS] - eepromConfig.accelBias[ZAXIS]) * eepromConfig.accelScaleFactor[ZAXIS];
+            if (eepromConfig.useMpu6050 == true)
+            {
+			    computeMpu6050TCBias();
 
-            // HJI sensors.accel500Hz[XAXIS] = firstOrderFilter(sensors.accel500Hz[XAXIS], &firstOrderFilters[ACCEL500HZ_X_LOWPASS]);
-            // HJI sensors.accel500Hz[YAXIS] = firstOrderFilter(sensors.accel500Hz[YAXIS], &firstOrderFilters[ACCEL500HZ_Y_LOWPASS]);
-            // HJI sensors.accel500Hz[ZAXIS] = firstOrderFilter(sensors.accel500Hz[ZAXIS], &firstOrderFilters[ACCEL500HZ_Z_LOWPASS]);
+                sensors.accel500Hz[XAXIS] = -((float)accelData500Hz[XAXIS] - accelTCBias[XAXIS]) * MPU6050_ACCEL_SCALE_FACTOR;
+                sensors.accel500Hz[YAXIS] = -((float)accelData500Hz[YAXIS] - accelTCBias[YAXIS]) * MPU6050_ACCEL_SCALE_FACTOR;
+                sensors.accel500Hz[ZAXIS] = -((float)accelData500Hz[ZAXIS] - accelTCBias[ZAXIS]) * MPU6050_ACCEL_SCALE_FACTOR;
 
-            computeGyroTCBias();
-            sensors.gyro500Hz[ROLL ] =  ((float)gyroData500Hz[ROLL ]  - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * GYRO_SCALE_FACTOR;
-			sensors.gyro500Hz[PITCH] = -((float)gyroData500Hz[PITCH]  - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * GYRO_SCALE_FACTOR;
-            sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ]  - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * GYRO_SCALE_FACTOR;
+                sensors.gyro500Hz[ROLL ] =  ((float)gyroData500Hz[ROLL ] - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * MPU6050_GYRO_SCALE_FACTOR;
+                sensors.gyro500Hz[PITCH] = -((float)gyroData500Hz[PITCH] - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * MPU6050_GYRO_SCALE_FACTOR;
+                sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ] - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * MPU6050_GYRO_SCALE_FACTOR;
+			}
+			else
+            {
+				sensors.accel500Hz[XAXIS] = -((float)accelData500Hz[XAXIS] - eepromConfig.accelBias[XAXIS]) * eepromConfig.accelScaleFactor[XAXIS];
+			    sensors.accel500Hz[YAXIS] = -((float)accelData500Hz[YAXIS] - eepromConfig.accelBias[YAXIS]) * eepromConfig.accelScaleFactor[YAXIS];
+			    sensors.accel500Hz[ZAXIS] = -((float)accelData500Hz[ZAXIS] - eepromConfig.accelBias[ZAXIS]) * eepromConfig.accelScaleFactor[ZAXIS];
+
+                // HJI sensors.accel500Hz[XAXIS] = firstOrderFilter(sensors.accel500Hz[XAXIS], &firstOrderFilters[ACCEL500HZ_X_LOWPASS]);
+                // HJI sensors.accel500Hz[YAXIS] = firstOrderFilter(sensors.accel500Hz[YAXIS], &firstOrderFilters[ACCEL500HZ_Y_LOWPASS]);
+                // HJI sensors.accel500Hz[ZAXIS] = firstOrderFilter(sensors.accel500Hz[ZAXIS], &firstOrderFilters[ACCEL500HZ_Z_LOWPASS]);
+
+                computeMpu3050TCBias();
+
+                sensors.gyro500Hz[ROLL ] =  ((float)gyroData500Hz[ROLL ]  - gyroRTBias[ROLL ] - gyroTCBias[ROLL ]) * MPU3050_GYRO_SCALE_FACTOR;
+			    sensors.gyro500Hz[PITCH] = -((float)gyroData500Hz[PITCH]  - gyroRTBias[PITCH] - gyroTCBias[PITCH]) * MPU3050_GYRO_SCALE_FACTOR;
+                sensors.gyro500Hz[YAW  ] = -((float)gyroData500Hz[YAW  ]  - gyroRTBias[YAW  ] - gyroTCBias[YAW  ]) * MPU3050_GYRO_SCALE_FACTOR;
+		    }
 
             MargAHRSupdate( sensors.gyro500Hz[ROLL],   sensors.gyro500Hz[PITCH],  sensors.gyro500Hz[YAW],
                             sensors.accel500Hz[XAXIS], sensors.accel500Hz[YAXIS], sensors.accel500Hz[ZAXIS],
@@ -159,9 +195,9 @@ int main(void)
 
 			dt100Hz = (float)deltaTime100Hz * 0.000001f;  // For integrations in 100 Hz loop
 
-            sensors.accel100Hz[XAXIS] = -((float)accelData500Hz[XAXIS] - accelRTBias[XAXIS] - eepromConfig.accelBias[XAXIS]) * eepromConfig.accelScaleFactor[XAXIS];
-			sensors.accel100Hz[YAXIS] = -((float)accelData500Hz[YAXIS] - accelRTBias[YAXIS] - eepromConfig.accelBias[YAXIS]) * eepromConfig.accelScaleFactor[YAXIS];
-			sensors.accel100Hz[ZAXIS] = -((float)accelData500Hz[ZAXIS] - accelRTBias[ZAXIS] - eepromConfig.accelBias[ZAXIS]) * eepromConfig.accelScaleFactor[ZAXIS];
+            sensors.accel100Hz[XAXIS] = sensors.accel500Hz[XAXIS];  // No sensor averaging so use the 500 Hz value
+			sensors.accel100Hz[YAXIS] = sensors.accel500Hz[YAXIS];  // No sensor averaging so use the 500 Hz value
+			sensors.accel100Hz[ZAXIS] = sensors.accel500Hz[ZAXIS];  // No sensor averaging so use the 500 Hz value
 
         	// HJI sensors.accel100Hz[XAXIS] = firstOrderFilter(sensors.accel100Hz[XAXIS], &firstOrderFilters[ACCEL100HZ_X_LOWPASS]);
 			// HJI sensors.accel100Hz[YAXIS] = firstOrderFilter(sensors.accel100Hz[YAXIS], &firstOrderFilters[ACCEL100HZ_Y_LOWPASS]);
@@ -201,7 +237,7 @@ int main(void)
                 {
                	    // Vertical Variables
             	    cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", earthAxisAccels[ZAXIS],
-            	    		                                  sensors.pressureAlt10Hz,
+            	    		                                  sensors.pressureAlt,
             	    		                                  hDotEstimate,
             	    		                                  hEstimate);
                 }

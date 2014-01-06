@@ -106,12 +106,12 @@ void SysTick_Handler(void)
 
     watchDogsTick();
 
-    if ((systemReady      == true ) &&
-    	(cliBusy          == false) &&
-    	(accelCalibrating == false) &&
-    	(escCalibrating   == false) &&
-    	(gyroCalibrating  == false) &&
-    	(magCalibrating   == false))
+    if ((systemReady        == true ) &&
+    	(cliBusy            == false) &&
+    	(adxl345Calibrating == false) &&
+    	(escCalibrating     == false) &&
+    	(magCalibrating     == false) &&
+    	(mpuCalibrating     == false))
 
     {
         frameCounter++;
@@ -130,13 +130,13 @@ void SysTick_Handler(void)
         {
             frame_500Hz = true;
 
-            readAccel();
+            readAdxl345();
 
             accelData500Hz[XAXIS] = rawAccel[XAXIS].value;
             accelData500Hz[YAXIS] = rawAccel[YAXIS].value;
             accelData500Hz[ZAXIS] = rawAccel[ZAXIS].value;
 
-            readGyro();
+            readMpu3050();
 
             gyroData500Hz[ROLL ] = rawGyro[ROLL ].value;
 			gyroData500Hz[PITCH] = rawGyro[PITCH].value;
@@ -149,14 +149,30 @@ void SysTick_Handler(void)
         {
             frame_100Hz = true;
 
-            if (frameCounter == COUNT_100HZ)
-                readTemperatureRequestPressure();
-            else if (frameCounter == FRAME_COUNT)
-                readPressureRequestTemperature();
+            if (eepromConfig.useMs5611 == true)
+            {
+                if (!newTemperatureReading)
+    			{
+    				ms5611ReadTemperatureRequestPressure();
+    			    newTemperatureReading = true;
+    			}
+    			else
+    			{
+    			    ms5611ReadPressureRequestTemperature();
+    			    newPressureReading = true;
+    			}
+            }
             else
-                readPressureRequestPressure();
+            {
+            	if (frameCounter == COUNT_100HZ)
+                    bmp085ReadTemperatureRequestPressure();
+                else if (frameCounter == FRAME_COUNT)
+                    bmp085ReadPressureRequestTemperature();
+                else
+                    bmp085ReadPressureRequestPressure();
 
-            pressureSum += uncompensatedPressure.value;
+                pressureSum += uncompensatedPressure.value;
+            }
         }
 
         ///////////////////////////////
@@ -306,6 +322,16 @@ void systemInit(void)
     cliPrintF(  "PCLK2->  %2d MHz\n",   rccClocks.PCLK2_Frequency  / 1000000);
     cliPrintF(  "SYSCLK-> %2d MHz\n\n", rccClocks.SYSCLK_Frequency / 1000000);
 
+    if (eepromConfig.useMpu6050 == true)
+    	cliPrint("Using MPU6050....\n\n");
+    else
+    	cliPrint("Using ADXL345/MPU3050....\n\n");
+
+    if (eepromConfig.useMs5611 == true)
+    	cliPrint("Using MS5611....\n\n");
+    else
+    	cliPrint("Using BMP085....\n\n");
+
     delay(10000);  // Remaining 10 seconds of 20 second delay for sensor stabilization - probably not long enough..
 
     LED1_ON;
@@ -322,10 +348,20 @@ void systemInit(void)
     initFirstOrderFilter();
     initPID();
 
-    initAccel();
-    initGyro();
+    if (eepromConfig.useMpu6050 == true)
+    	initMpu6050();
+    else
+   {
+    	initAdxl345();
+    	initMpu3050();
+   }
+
     initMag();
-    initPressure();
+
+    if (eepromConfig.useMs5611 == true)
+    	initMs5611();
+    else
+    	initBmp085();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

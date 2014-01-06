@@ -262,7 +262,7 @@ void cliCom(void)
         	cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", sensors.gyro500Hz[ROLL ] * R2D,
         			                                  sensors.gyro500Hz[PITCH] * R2D,
         					                          sensors.gyro500Hz[YAW  ] * R2D,
-        					                          gyroTemperature);
+        					                          mpuTemperature);
         	validCliCommand = false;
         	break;
 
@@ -279,7 +279,7 @@ void cliCom(void)
 
         case 'k': // Vertical Axis Variables
         	cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", earthAxisAccels[ZAXIS],
-        			                                  sensors.pressureAlt10Hz,
+        			                                  sensors.pressureAlt,
         					                          hDotEstimate,
         					                          hEstimate);
         	validCliCommand = false;

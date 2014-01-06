@@ -75,9 +75,10 @@ int32_t x1, x2, x3, b3, b5, b6, p;
 uint32_t b4, b7;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Read Temperature Request Pressure
+// BMP085 Read Temperature Request Pressure
 ///////////////////////////////////////////////////////////////////////////////
-void readTemperatureRequestPressure(void)
+
+void bmp085ReadTemperatureRequestPressure(void)
 {
     uint8_t data[2];
 
@@ -90,10 +91,10 @@ void readTemperatureRequestPressure(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ReadPressureRequestPressure
+// BMP085 Read Pressure Request Pressure
 ///////////////////////////////////////////////////////////////////////////////
 
-void readPressureRequestPressure(void)
+void bmp085ReadPressureRequestPressure(void)
 {
     uint8_t data[3];
 
@@ -109,10 +110,10 @@ void readPressureRequestPressure(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Read Pressure Request Temperature
+// BMP085Read Pressure Request Temperature
 ///////////////////////////////////////////////////////////////////////////////
 
-void readPressureRequestTemperature(void)
+void bmp085ReadPressureRequestTemperature(void)
 {
     uint8_t data[3];
 
@@ -128,10 +129,10 @@ void readPressureRequestTemperature(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Calculate Temperature
+// Calculate BMP085 Temperature
 ///////////////////////////////////////////////////////////////////////////////
 
-void calculateTemperature(void)
+void calculateBmp085Temperature(void)
 {
     x1 = ((uncompensatedTemperature.value - (int32_t) ac6.value) * (int32_t) ac5.value) >> 15;
     x2 = ((int32_t) mc.value << 11) / (x1 + md.value);
@@ -139,10 +140,10 @@ void calculateTemperature(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Calculate Pressure Altitude
+// Calculate BMP085 Pressure Altitude
 ///////////////////////////////////////////////////////////////////////////////
 
-void calculatePressureAltitude(void)
+void calculateBmp085PressureAltitude(void)
 {
     b6 = b5 - 4000;
     x1 = (b2.value * (b6 * b6 >> 12)) >> 11;
@@ -164,10 +165,10 @@ void calculatePressureAltitude(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Pressure Initialization
+// BMP085 Initialization
 ///////////////////////////////////////////////////////////////////////////////
 
-void initPressure(void)
+void initBmp085(void)
 {
     uint8_t promData[BMP085_PROM_DATA_LEN];
 
@@ -204,16 +205,16 @@ void initPressure(void)
 
     delay(10);
 
-    readTemperatureRequestPressure();
+    bmp085ReadTemperatureRequestPressure();
 
     delay(10);
 
-    readPressureRequestTemperature();
+    bmp085ReadPressureRequestTemperature();
 
     delay(10);
 
-    calculateTemperature();
-    calculatePressureAltitude();
+    calculateBmp085Temperature();
+    calculateBmp085PressureAltitude();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

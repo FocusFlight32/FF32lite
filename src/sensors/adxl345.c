@@ -60,31 +60,23 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////
 
-uint8_t accelCalibrating = false;
-
-float accelOneG          = 9.8065;
-
-float accelRTBias[3] = { 0.0f, 0.0f, 0.0f };
-
-int16_t accelData500Hz[3] = { 0, 0, 0 };
-
-int16andUint8_t rawAccel[3];
+uint8_t adxl345Calibrating = false;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Compute Accel Runtime Data
+// Compute ADXL345 Runtime Data
 ///////////////////////////////////////////////////////////////////////////////
 
-void computeAccelRTData(void)
+void computeAdxl345RTData(void)
 {
     uint8_t  axis;
     uint16_t samples;
     float accelSum[3] = { 0.0f, 0.0f, 0.0f };
 
-    accelCalibrating = true;
+    adxl345Calibrating = true;
 
     for (samples = 0; samples < 2000; samples++)
     {
-        readAccel();
+        readAdxl345();
 
         accelSum[XAXIS] += ((float)rawAccel[XAXIS].value - eepromConfig.accelBias[XAXIS]) * eepromConfig.accelScaleFactor[XAXIS];
         accelSum[YAXIS] += ((float)rawAccel[YAXIS].value - eepromConfig.accelBias[YAXIS]) * eepromConfig.accelScaleFactor[YAXIS];
@@ -100,14 +92,14 @@ void computeAccelRTData(void)
 
     accelOneG = sqrt(SQR(accelSum[XAXIS]) + SQR(accelSum[YAXIS]) + SQR(accelSum[ZAXIS]));
 
-    accelCalibrating = false;
+    adxl345Calibrating = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Read Accel
 ///////////////////////////////////////////////////////////////////////////////
 
-void readAccel(void)
+void readAdxl345(void)
 {
     uint8_t buffer[6];
 
@@ -125,7 +117,7 @@ void readAccel(void)
 // Accel Initialization
 ///////////////////////////////////////////////////////////////////////////////
 
-void initAccel(void)
+void initAdxl345(void)
 {
     i2cWrite(ADXL345_ADDRESS, ADXL345_POWER_CTL, MEASURE);
 
@@ -139,7 +131,7 @@ void initAccel(void)
 
     delay(100);
 
-   computeAccelRTData();
+   computeAdxl345RTData();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

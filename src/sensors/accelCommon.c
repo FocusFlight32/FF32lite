@@ -32,40 +32,11 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "board.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-// Vertical Complementary Filter Defines and Variables
-///////////////////////////////////////////////////////////////////////////////
 
-float   accelZ;
-float   estimationError = 0.0f;
-float   hDotEstimate    = 0.0f;
-float   hEstimate;
-uint8_t previousExecUp  = false;
+float accelOneG = 9.8065;
+
+int16_t accelData500Hz[3];
+
+int16andUint8_t rawAccel[3];
 
 ///////////////////////////////////////////////////////////////////////////////
-// Vertical Complementary Filter
-///////////////////////////////////////////////////////////////////////////////
-
-void vertCompFilter(float dt)
-{
-    if ((execUp == true) && (previousExecUp == false))
-    	hEstimate = sensors.pressureAlt;
-
-    previousExecUp = execUp;
-
-	if (execUp == true)
-    {
-    	accelZ = -earthAxisAccels[ZAXIS] + eepromConfig.compFilterB * estimationError;
-
-        hDotEstimate += accelZ * dt;
-
-        hEstimate += (hDotEstimate + eepromConfig.compFilterA * estimationError) * dt;
-
-        estimationError = sensors.pressureAlt - hEstimate;
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-
-
-

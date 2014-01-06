@@ -86,10 +86,15 @@ typedef union {
     uint16_t value;
     uint8_t bytes[2];
 } uint16andUint8_t;
+
+typedef union {
+	uint32_t value;
+	 uint8_t bytes[4];
+} uint32andUint8_t;
+
 ///////////////////////////////////////
 
 typedef volatile uint8_t semaphore_t;
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Sensor Variables
@@ -101,7 +106,7 @@ typedef struct sensors_t {
     float attitude500Hz[3];
     float gyro500Hz[3];
     float mag10Hz[3];
-    float pressureAlt10Hz;
+    float pressureAlt;  // BMP085 at 10 Hz,  MS5611 at 50 Hz
 
 } sensors_t;
 
@@ -151,6 +156,12 @@ enum { ALT_DISENGAGED_THROTTLE_ACTIVE,
        ALT_DISENGAGED_THROTTLE_INACTIVE };
 
 ///////////////////////////////////////////////////////////////////////////////
+// MPU6000 DLPF Configurations
+///////////////////////////////////////////////////////////////////////////////
+
+enum { DLPF_256HZ, DLPF_188HZ, DLPF_98HZ, DLPF_42HZ };
+
+///////////////////////////////////////////////////////////////////////////////
 // Receiver Configurations
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -164,8 +175,15 @@ typedef struct eepromConfig_t
 {
     uint8_t version;
 
-    float accelBias[3];
-    float accelScaleFactor[3];
+    uint8_t useMpu6050;
+
+    uint8_t useMs5611;
+
+    float accelBias[3];             // For ADXL345
+    float accelScaleFactor[3];      // For ADXL345
+
+    float accelTCBiasSlope[3];      // For MPU6050
+    float accelTCBiasIntercept[3];  // For MPU6050
 
     float gyroTCBiasSlope[3];
     float gyroTCBiasIntercept[3];
@@ -185,6 +203,8 @@ typedef struct eepromConfig_t
     float compFilterA;
 
     float compFilterB;
+
+    uint8_t dlpfSetting;
 
     ///////////////////////////////////
 

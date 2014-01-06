@@ -84,36 +84,19 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #define SAMPLE_RATE_DIVISOR 0x00        // 1000 Hz = 1000/(0 + 1)
 #endif
 
-
-///////////////////////////////////////
-
-uint8_t gyroCalibrating = false;
-
-float gyroRTBias[3];
-
-int16_t gyroData500Hz[3];
-
-float gyroTCBias[3];
-
-float gyroTemperature;
-
-int16andUint8_t rawGyro[3];
-
-int16andUint8_t rawGyroTemperature;
-
 ///////////////////////////////////////////////////////////////////////////////
-// Read Gyro
+// Read MPU3050
 ///////////////////////////////////////////////////////////////////////////////
 
-void readGyro(void)
+void readMpu3050(void)
 {
     uint8_t I2C2_Buffer_Rx[8];
 
     // Get data from device
     i2cRead(MPU3050_ADDRESS, MPU3050_TEMP_OUT, 8, I2C2_Buffer_Rx);
 
-    rawGyroTemperature.bytes[1] = I2C2_Buffer_Rx[0];
-    rawGyroTemperature.bytes[0] = I2C2_Buffer_Rx[1];
+    rawMpuTemperature.bytes[1] = I2C2_Buffer_Rx[0];
+    rawMpuTemperature.bytes[0] = I2C2_Buffer_Rx[1];
 
     rawGyro[ROLL ].bytes[1] = I2C2_Buffer_Rx[2];
     rawGyro[ROLL ].bytes[0] = I2C2_Buffer_Rx[3];
@@ -124,34 +107,35 @@ void readGyro(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Compute Gyro Temperature Compensation Bias
+// Compute MPU3050 Temperature Compensation Bias
 ///////////////////////////////////////////////////////////////////////////////
 
-void computeGyroTCBias(void)
+void computeMpu3050TCBias(void)
 {
-    gyroTemperature = (float) (rawGyroTemperature.value + 13200) / 280.0f + 35.0f;
+    mpuTemperature = (float) (rawMpuTemperature.value + 13200) / 280.0f + 35.0f;
 
-    gyroTCBias[ROLL ] = eepromConfig.gyroTCBiasSlope[ROLL ] * gyroTemperature + eepromConfig.gyroTCBiasIntercept[ROLL ];
-    gyroTCBias[PITCH] = eepromConfig.gyroTCBiasSlope[PITCH] * gyroTemperature + eepromConfig.gyroTCBiasIntercept[PITCH];
-    gyroTCBias[YAW  ] = eepromConfig.gyroTCBiasSlope[YAW  ] * gyroTemperature + eepromConfig.gyroTCBiasIntercept[YAW  ];
+    gyroTCBias[ROLL ] = eepromConfig.gyroTCBiasSlope[ROLL ] * mpuTemperature + eepromConfig.gyroTCBiasIntercept[ROLL ];
+    gyroTCBias[PITCH] = eepromConfig.gyroTCBiasSlope[PITCH] * mpuTemperature + eepromConfig.gyroTCBiasIntercept[PITCH];
+    gyroTCBias[YAW  ] = eepromConfig.gyroTCBiasSlope[YAW  ] * mpuTemperature + eepromConfig.gyroTCBiasIntercept[YAW  ];
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Compute Gyro Runtime Bias
+// Compute MPU3050 Runtime Bias
 ///////////////////////////////////////////////////////////////////////////////
 
-void computeGyroRTBias(void)
+void computeMpu3050RTBias(void)
 {
     uint8_t axis;
     uint16_t samples;
     float gyroSum[3] = { 0.0f, 0.0f, 0.0f };
 
-    gyroCalibrating = true;
+    mpuCalibrating = true;
 
-    for (samples = 0; samples < 2000; samples++) {
-        readGyro();
+    for (samples = 0; samples < 2000; samples++)
+    {
+        readMpu3050();
 
-        computeGyroTCBias();
+        computeMpu3050TCBias();
 
         gyroSum[ROLL] += rawGyro[ROLL].value - gyroTCBias[ROLL];
         gyroSum[PITCH] += rawGyro[PITCH].value - gyroTCBias[PITCH];
@@ -165,14 +149,14 @@ void computeGyroRTBias(void)
 
     }
 
-    gyroCalibrating = false;
+    mpuCalibrating = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Gyro Initialization
+// MPU3050 Initialization
 ///////////////////////////////////////////////////////////////////////////////
 
-void initGyro(void)
+void initMpu3050(void)
 {
     i2cWrite(MPU3050_ADDRESS, MPU3050_PWR_MGM, H_RESET);
     i2cWrite(MPU3050_ADDRESS, MPU3050_PWR_MGM, INTERNAL_OSC);
@@ -182,7 +166,7 @@ void initGyro(void)
 
     delay(100);
 
-    computeGyroRTBias();
+    computeMpu3050RTBias();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

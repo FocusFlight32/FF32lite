@@ -35,7 +35,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 // Accelerometer Calibration
 ///////////////////////////////////////////////////////////////////////////////
 
-void accelCalibration(void)
+void adxl345Calibration(void)
 {
     float noseUp = 0.0f;
     float noseDown = 0.0f;
@@ -48,7 +48,7 @@ void accelCalibration(void)
 
     uint8_t temp;
 
-    accelCalibrating = true;
+    adxl345Calibrating = true;
 
     cliPrint("\nAccelerometer Calibration:\n\n");
 
@@ -57,14 +57,14 @@ void accelCalibration(void)
     cliPrint("Place accelerometer right side up\n");
     cliPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
+    while (cliAvailable() == false);
+
     temp = cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
-        readAccel();
+        readAdxl345();
         rightSideUp += (float) rawAccel[ZAXIS].value;
         delayMicroseconds(1000);
     }
@@ -81,7 +81,7 @@ void accelCalibration(void)
     cliPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
-        readAccel();
+        readAdxl345();
         upSideDown += (float) rawAccel[ZAXIS].value;
         delayMicroseconds(1000);
     }
@@ -104,7 +104,7 @@ void accelCalibration(void)
     cliPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
-        readAccel();
+        readAdxl345();
         leftWingDown += (float) rawAccel[YAXIS].value;
         delayMicroseconds(1000);
     }
@@ -121,7 +121,7 @@ void accelCalibration(void)
     cliPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
-        readAccel();
+        readAdxl345();
         rightWingDown += (float) rawAccel[YAXIS].value;
         delayMicroseconds(1000);
     }
@@ -144,7 +144,7 @@ void accelCalibration(void)
     cliPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
-        readAccel();
+        readAdxl345();
         noseUp += (float) rawAccel[XAXIS].value;
         delayMicroseconds(1000);
     }
@@ -154,14 +154,14 @@ void accelCalibration(void)
     cliPrint("Place accelerometer front edge down\n");
     cliPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
+    while (cliAvailable() == false);
+
     temp = cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
-        readAccel();
+        readAdxl345();
         noseDown += (float) rawAccel[XAXIS].value;
         delayMicroseconds(1000);
     }
@@ -172,7 +172,7 @@ void accelCalibration(void)
 
     eepromConfig.accelScaleFactor[XAXIS] = (2.0f * 9.8065f) / (fabs(noseUp) + fabs(noseDown));
 
-    accelCalibrating = false;
+    adxl345Calibrating = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

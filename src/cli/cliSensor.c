@@ -38,7 +38,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 void sensorCLI()
 {
     uint8_t  sensorQuery = 'x';
-    // HJI uint8_t  tempInt;
+    uint8_t  tempInt;
     uint8_t  validQuery  = false;
 
     cliBusy = true;
@@ -61,13 +61,29 @@ void sensorCLI()
             ///////////////////////////
 
             case 'a': // Sensor Data
-                cliPrintF("\nAccel Scale Factor:        %9.4f, %9.4f, %9.4f\n", eepromConfig.accelScaleFactor[XAXIS],
-                                                		                        eepromConfig.accelScaleFactor[YAXIS],
-                                                		                        eepromConfig.accelScaleFactor[ZAXIS]);
-                cliPrintF("Accel Bias:                %9.4f, %9.4f, %9.4f\n",   eepromConfig.accelBias[XAXIS],
-                                                		                        eepromConfig.accelBias[YAXIS],
-                                                		                        eepromConfig.accelBias[ZAXIS]);
-            	cliPrintF("Gyro Temp Comp Slope:      %9.4f, %9.4f, %9.4f\n",   eepromConfig.gyroTCBiasSlope[ROLL ],
+
+               	if (eepromConfig.useMpu6050 == true)
+            	{
+                    cliPrint("\nUsing MPU6050....\n\n");
+                    cliPrintF("Accel Temp Comp Slope:     %9.4f, %9.4f, %9.4f\n", eepromConfig.accelTCBiasSlope[XAXIS],
+                                                                                  eepromConfig.accelTCBiasSlope[YAXIS],
+                                                                                  eepromConfig.accelTCBiasSlope[ZAXIS]);
+                    cliPrintF("Accel Temp Comp Bias:      %9.4f, %9.4f, %9.4f\n", eepromConfig.accelTCBiasIntercept[XAXIS],
+                                                                                  eepromConfig.accelTCBiasIntercept[YAXIS],
+                                                                                  eepromConfig.accelTCBiasIntercept[ZAXIS]);
+            	}
+            	else
+            	{
+            		cliPrint("\nUsing ADXL345/MPU3050....\n\n");
+            		cliPrintF("Accel Scale Factor:        %9.4f, %9.4f, %9.4f\n", eepromConfig.accelScaleFactor[XAXIS],
+                                                		                          eepromConfig.accelScaleFactor[YAXIS],
+                                                		                          eepromConfig.accelScaleFactor[ZAXIS]);
+                    cliPrintF("Accel Bias:                %9.4f, %9.4f, %9.4f\n", eepromConfig.accelBias[XAXIS],
+                                                		                          eepromConfig.accelBias[YAXIS],
+                                                		                          eepromConfig.accelBias[ZAXIS]);
+            	}
+
+                cliPrintF("Gyro Temp Comp Slope:      %9.4f, %9.4f, %9.4f\n",   eepromConfig.gyroTCBiasSlope[ROLL ],
             	                                                                eepromConfig.gyroTCBiasSlope[PITCH],
             	                                                                eepromConfig.gyroTCBiasSlope[YAW  ]);
             	cliPrintF("Gyro Temp Comp Intercept:  %9.4f, %9.4f, %9.4f\n",   eepromConfig.gyroTCBiasIntercept[ROLL ],
@@ -85,7 +101,32 @@ void sensorCLI()
                 cliPrintF("hdot est/h est Comp Fil A: %9.4f\n",   eepromConfig.compFilterA);
                 cliPrintF("hdot est/h est Comp Fil B: %9.4f\n",   eepromConfig.compFilterB);
 
-                if (eepromConfig.verticalVelocityHoldOnly)
+                if (eepromConfig.useMpu6050 == true)
+                {
+                	cliPrint("MPU6000 DLPF:                 ");
+                    switch(eepromConfig.dlpfSetting)
+                    {
+                        case DLPF_256HZ:
+                            cliPrint("256 Hz\n");
+                            break;
+                        case DLPF_188HZ:
+                            cliPrint("188 Hz\n");
+                            break;
+                        case DLPF_98HZ:
+                            cliPrint("98 Hz\n");
+                            break;
+                        case DLPF_42HZ:
+                            cliPrint("42 Hz\n");
+                            break;
+                   }
+                }
+
+                if (eepromConfig.useMs5611 == true)
+                	cliPrint("\nUsing MS5611....\n\n");
+                else
+                	cliPrint("\nUsing BMP085....\n\n");
+
+                if (eepromConfig.verticalVelocityHoldOnly == true)
                 	cliPrint("Vertical Velocity Hold Only\n\n");
                 else
                 	cliPrint("Vertical Velocity and Altitude Hold\n\n");
@@ -99,8 +140,11 @@ void sensorCLI()
 
             ///////////////////////////
 
-            case 'b': // Gyro Temp Calibration
-            	gyroTempCalibration();
+            case 'b': // MPU Calibration
+            	if (eepromConfig.useMpu6050 == true)
+            		mpu6050Calibration();
+            	else
+            		mpu3050Calibration();
 
                 sensorQuery = 'a';
                 validQuery = true;
@@ -118,13 +162,53 @@ void sensorCLI()
             ///////////////////////////
 
             case 'd': // Accel Calibration
-                accelCalibration();
+            	if (eepromConfig.useMpu6050 == false)
+            	{
+            		adxl345Calibration();
+
+                    sensorQuery = 'a';
+                    validQuery = true;
+            	}
+                break;
+
+            ///////////////////////////
+
+            case 'm': // Toggle MPU3050/MPU6050
+                if (eepromConfig.useMpu6050)
+                {
+                    eepromConfig.useMpu6050 = false;
+                    initAdxl345();
+                    initMpu3050();
+                }
+                else
+                {
+                    eepromConfig.useMpu6050 = true;
+                    initMpu6050();
+                }
 
                 sensorQuery = 'a';
                 validQuery = true;
                 break;
 
             ///////////////////////////
+
+            case 'p': // Toggle BMP085/MS5611
+                if (eepromConfig.useMs5611)
+                {
+                    eepromConfig.useMs5611 = false;
+                    initBmp085();
+                }
+                else
+                {
+                    eepromConfig.useMs5611 = true;
+                    initMs5611();
+                }
+
+                sensorQuery = 'a';
+                validQuery = true;
+                break;
+
+             ///////////////////////////
 
             case 'v': // Toggle Vertical Velocity Hold Only
                 if (eepromConfig.verticalVelocityHoldOnly)
@@ -143,6 +227,39 @@ void sensorCLI()
 			    cliBusy = false;
 			    return;
 			    break;
+
+            ///////////////////////////
+
+            case 'A': // Set MPU6050 Digital Low Pass Filter
+                if (eepromConfig.useMpu6050 == true)
+                {
+                	tempInt = (uint8_t)readFloatCLI();
+
+                    switch (tempInt)
+                    {
+                        case DLPF_256HZ:
+                            eepromConfig.dlpfSetting = BITS_DLPF_CFG_256HZ;
+                            break;
+
+                        case DLPF_188HZ:
+                            eepromConfig.dlpfSetting = BITS_DLPF_CFG_188HZ;
+                            break;
+
+                        case DLPF_98HZ:
+                            eepromConfig.dlpfSetting = BITS_DLPF_CFG_98HZ;
+                            break;
+
+                        case DLPF_42HZ:
+                            eepromConfig.dlpfSetting = BITS_DLPF_CFG_42HZ;
+                            break;
+                    }
+
+                    i2cWrite(MPU6050_ADDRESS, MPU6050_CONFIG, eepromConfig.dlpfSetting);  // Accel and Gyro DLPF Setting
+                    sensorQuery = 'a';
+                    validQuery = true;
+                }
+
+                break;
 
             ///////////////////////////
 
@@ -205,11 +322,23 @@ void sensorCLI()
 
 			case '?':
 			   	cliPrint("\n");
-			   	cliPrint("'a' Display Sensor Data                    'A' Set MPU6000 DLPF                     A0 thru 3\n");
-			   	cliPrint("'b' MPU3050 Temp Calibration               'B' Set Accel Cutoff                     BAccelCutoff\n");
+
+			   	if (eepromConfig.useMpu6050 == true)
+			   		cliPrint("'a' Display Sensor Data                    'A' Set MPU6000 DLPF                     A0 thru 3\n");
+			   	else
+			   		cliPrint("'a' Display Sensor Data\n");
+
+			   	cliPrint("'b' MPU Calibration                        'B' Set Accel Cutoff                     BAccelCutoff\n");
 			   	cliPrint("'c' Magnetometer Calibration               'C' Set kpAcc/kiAcc                      CKpAcc;KiAcc\n");
-			   	cliPrint("'d' ADXL345 Calibration                    'D' Set kpMag/kiMag                      DKpMag;KiMag\n");
+
+			   	if (eepromConfig.useMpu6050 == true)
+			   		cliPrint("                                           'D' Set kpMag/kiMag                      DKpMag;KiMag\n");
+			   	else
+			   		cliPrint("'d' ADXL345 Calibration                    'D' Set kpMag/kiMag                      DKpMag;KiMag\n");
+
 			   	cliPrint("                                           'E' Set h dot est/h est Comp Filter A/B  EA;B\n");
+			   	cliPrint("'m' Toggle MPU3050/MPU6050\n");
+			   	cliPrint("'p' Toggle BMP085/MS5611\n");
 			   	cliPrint("'v' Toggle Vertical Velocity Hold Only     'V' Set Voltage Monitor Parameters       Vscale;bias;cells\n");
 			    cliPrint("                                           'W' Write EEPROM Parameters\n");
 			    cliPrint("'x' Exit Sensor CLI                        '?' Command Summary\n");

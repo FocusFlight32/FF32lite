@@ -32,44 +32,9 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 ///////////////////////////////////////////////////////////////////////////////
-
-#define NUMBER_OF_FIRST_ORDER_FILTERS 9
-
-#define ACCEL500HZ_X_LOWPASS 0
-#define ACCEL500HZ_Y_LOWPASS 1
-#define ACCEL500HZ_Z_LOWPASS 2
-
-#define ACCEL100HZ_X_LOWPASS 3
-#define ACCEL100HZ_Y_LOWPASS 4
-#define ACCEL100HZ_Z_LOWPASS 5
-
-#define BMP085_LOWPASS       6
-
-#define MS5611_LOWPASS       7
-
-#define EARTH_AXIS_ACCEL_Z_HIGHPASS 8
-
+// MPU Temperature Calibration
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef struct firstOrderFilterData {
-  float   gx1;
-  float   gx2;
-  float   gx3;
-  float   previousInput;
-  float   previousOutput;
-} firstOrderFilterData_t;
-
-firstOrderFilterData_t firstOrderFilters[NUMBER_OF_FIRST_ORDER_FILTERS];
+void mpu3050Calibration(void);
 
 ///////////////////////////////////////////////////////////////////////////////
-
-void initFirstOrderFilter(void);
-
-///////////////////////////////////////////////////////////////////////////////
-
-float firstOrderFilter(float input, struct firstOrderFilterData *filterParameters);
-
-///////////////////////////////////////////////////////////////////////////////
-
-
-

@@ -44,7 +44,7 @@ const char rcChannelLetters[] = "AERT1234";
 
 float vTailThrust;
 
-static uint8_t checkNewEEPROMConf = 4;
+static uint8_t checkNewEEPROMConf = 5;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -114,6 +114,12 @@ void checkFirstTime(bool eepromReset)
 
 	    ///////////////////////////////
 
+        eepromConfig.useMpu6050 = false;
+
+        eepromConfig.useMs5611  = false;
+
+        ///////////////////////////////
+
         eepromConfig.accelBias[XAXIS] = 0.0f;
         eepromConfig.accelBias[YAXIS] = 0.0f;
         eepromConfig.accelBias[ZAXIS] = 0.0f;
@@ -123,6 +129,18 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.accelScaleFactor[XAXIS] = 9.8065f / 256.0f;
         eepromConfig.accelScaleFactor[YAXIS] = 9.8065f / 256.0f;
         eepromConfig.accelScaleFactor[ZAXIS] = 9.8065f / 256.0f;
+
+        ///////////////////////////////
+
+        eepromConfig.accelTCBiasSlope[XAXIS] = 0.0f;
+        eepromConfig.accelTCBiasSlope[YAXIS] = 0.0f;
+        eepromConfig.accelTCBiasSlope[ZAXIS] = 0.0f;
+
+        ///////////////////////////////
+
+        eepromConfig.accelTCBiasIntercept[XAXIS] = 0.0f;
+        eepromConfig.accelTCBiasIntercept[YAXIS] = 0.0f;
+        eepromConfig.accelTCBiasIntercept[ZAXIS] = 0.0f;
 
         ///////////////////////////////
 
@@ -157,6 +175,10 @@ void checkFirstTime(bool eepromReset)
 
 	    eepromConfig.compFilterA =  2.000f;
 	    eepromConfig.compFilterB =  1.000f;
+
+	    ///////////////////////////////
+
+	    eepromConfig.dlpfSetting = BITS_DLPF_CFG_98HZ;
 
 	    ///////////////////////////////
 
