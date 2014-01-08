@@ -84,9 +84,23 @@ int main(void)
                     newTemperatureReading = false;
                     newPressureReading    = false;
                 }
+           }
+           else
+           {
+			   if (newTemperatureReading && newPressureReading)
+			   {
+				   uncompensatedTemperatureValue = uncompensatedTemperature.value;
+				   uncompensatedPressureValue    = uncompensatedPressure.value;
 
-                sensors.pressureAlt = firstOrderFilter(sensors.pressureAlt, &firstOrderFilters[MS5611_LOWPASS]);
-            }
+				   calculateBmp085Temperature();
+				   calculateBmp085PressureAltitude();
+
+				   newTemperatureReading = false;
+				   newPressureReading    = false;
+			   }
+           }
+
+            sensors.pressureAlt50Hz = firstOrderFilter(sensors.pressureAlt50Hz, &firstOrderFilters[PRESSURE_ALT_LOWPASS]);
 
             executionTime50Hz = micros() - currentTime;
         }
@@ -107,17 +121,6 @@ int main(void)
 
 			newMagData = false;
 			magDataUpdate = true;
-
-        	if (eepromConfig.useMs5611 == false)
-        	{
-        		pressureAverage = pressureSum / 10;
-        		pressureSum = 0;
-        	    calculateBmp085Temperature();
-        	    calculateBmp085PressureAltitude();
-        	    sensors.pressureAlt = pressureAlt;
-
-        	    sensors.pressureAlt = firstOrderFilter(sensors.pressureAlt, &firstOrderFilters[BMP085_LOWPASS]);
-        	}
 
         	cliCom();
 
@@ -237,7 +240,7 @@ int main(void)
                 {
                	    // Vertical Variables
             	    cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", earthAxisAccels[ZAXIS],
-            	    		                                  sensors.pressureAlt,
+            	    		                                  sensors.pressureAlt50Hz,
             	    		                                  hDotEstimate,
             	    		                                  hEstimate);
                 }

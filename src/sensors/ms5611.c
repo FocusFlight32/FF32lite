@@ -57,10 +57,6 @@ int32_t dT;
 
 int32_t ms5611Temperature;
 
-uint8_t newPressureReading = false;
-
-uint8_t newTemperatureReading = false;
-
 ///////////////////////////////////////////////////////////////////////////////
 // MS5611 Read Temperature Request Pressure
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,33 +75,6 @@ void ms5611ReadTemperatureRequestPressure(void)
 	    i2cWrite(MS5611_ADDRESS, 0xFF, 0x40);  // Request pressure conversion
 	#elif (OSR ==  512)
 	    i2cWrite(MS5611_ADDRESS, 0xFF, 0x42);
-	#elif (OSR == 1024)
-	    i2cWrite(MS5611_ADDRESS, 0xFF, 0x44);
-	#elif (OSR == 2048)
-	    i2cWrite(MS5611_ADDRESS, 0xFF, 0x46);
-	#elif (OSR == 4096)
-	    i2cWrite(MS5611_ADDRESS, 0xFF, 0x48);
-    #endif
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MS5611 ReadPressureRequestPressure
-///////////////////////////////////////////////////////////////////////////////
-
-void ms5611ReadPressureRequestPressure(void)
-{
-    uint8_t data[3];
-
-    i2cRead(MS5611_ADDRESS, 0x00, 3, data);    // Request pressure read
-
-    d1.bytes[2] = data[0];
-    d1.bytes[1] = data[1];
-    d1.bytes[0] = data[2];
-
-    #if   (OSR ==  256)
-	    i2cWrite(MS5611_ADDRESS, 0xFF, 0x40);  // Request pressure conversion
-	#elif (OSR ==  512)
-		i2cWrite(MS5611_ADDRESS, 0xFF, 0x42);
 	#elif (OSR == 1024)
 	    i2cWrite(MS5611_ADDRESS, 0xFF, 0x44);
 	#elif (OSR == 2048)
@@ -196,7 +165,7 @@ void calculateMs5611PressureAltitude(void)
 
 	p = (((d1Value * sensitivity) >> 21) - offset) >> 15;
 
-	sensors.pressureAlt = 44330.0f * (1.0f - pow((float)p / 101325.0f, 1.0f / 5.255f));
+	sensors.pressureAlt50Hz = 44330.0f * (1.0f - pow((float)p / 101325.0f, 1.0f / 5.255f));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

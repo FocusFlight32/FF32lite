@@ -324,7 +324,7 @@ void sensorCLI()
 			   	cliPrint("\n");
 
 			   	if (eepromConfig.useMpu6050 == true)
-			   		cliPrint("'a' Display Sensor Data                    'A' Set MPU6000 DLPF                     A0 thru 3\n");
+			   		cliPrint("'a' Display Sensor Data                    'A' Set MPU6050 DLPF                     A0 thru 3\n");
 			   	else
 			   		cliPrint("'a' Display Sensor Data\n");
 

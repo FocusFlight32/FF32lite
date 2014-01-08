@@ -189,12 +189,12 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'c': // Velocity PIDs
-            cliPrintF("hDot PID:  %8.4f, %8.4f, %8.4f, %8.4f, %8.4f, %s\n",   eepromConfig.PID[HDOT_PID].B,
-               		                                                          eepromConfig.PID[HDOT_PID].P,
-               		                                                          eepromConfig.PID[HDOT_PID].I,
-               		                                                          eepromConfig.PID[HDOT_PID].D,
-               		                                                          eepromConfig.PID[HDOT_PID].windupGuard,
-               		                                                          eepromConfig.PID[HDOT_PID].dErrorCalc ? "Error" : "State");
+            cliPrintF("\nhDot PID:  %8.4f, %8.4f, %8.4f, %8.4f, %8.4f, %s\n",   eepromConfig.PID[HDOT_PID].B,
+               		                                                            eepromConfig.PID[HDOT_PID].P,
+               		                                                            eepromConfig.PID[HDOT_PID].I,
+               		                                                            eepromConfig.PID[HDOT_PID].D,
+               		                                                            eepromConfig.PID[HDOT_PID].windupGuard,
+               		                                                            eepromConfig.PID[HDOT_PID].dErrorCalc ? "Error" : "State");
             cliQuery = 'x';
             validCliCommand = false;
             break;
@@ -202,12 +202,12 @@ void cliCom(void)
         ///////////////////////////////
 
         case 'd': // Position PIDs
-            cliPrintF("h PID:  %8.4f, %8.4f, %8.4f, %8.4f, %8.4f, %s\n",   eepromConfig.PID[H_PID].B,
-               		                                                       eepromConfig.PID[H_PID].P,
-               		                                                       eepromConfig.PID[H_PID].I,
-               		                                                       eepromConfig.PID[H_PID].D,
-               		                                                       eepromConfig.PID[H_PID].windupGuard,
-               		                                                       eepromConfig.PID[H_PID].dErrorCalc ? "Error" : "State");
+            cliPrintF("\nh PID:  %8.4f, %8.4f, %8.4f, %8.4f, %8.4f, %s\n",   eepromConfig.PID[H_PID].B,
+               		                                                         eepromConfig.PID[H_PID].P,
+               		                                                         eepromConfig.PID[H_PID].I,
+               		                                                         eepromConfig.PID[H_PID].D,
+               		                                                         eepromConfig.PID[H_PID].windupGuard,
+               		                                                         eepromConfig.PID[H_PID].dErrorCalc ? "Error" : "State");
             cliQuery = 'x';
             validCliCommand = false;
           	break;
@@ -279,7 +279,7 @@ void cliCom(void)
 
         case 'k': // Vertical Axis Variables
         	cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", earthAxisAccels[ZAXIS],
-        			                                  sensors.pressureAlt,
+        			                                  sensors.pressureAlt50Hz,
         					                          hDotEstimate,
         					                          hEstimate);
         	validCliCommand = false;
@@ -304,14 +304,6 @@ void cliCom(void)
            	break;
 
        ///////////////////////////////
-
-        // HJI case 'o':
-        // HJI     cliPrintF("%9.4f\n", batteryVoltage);
-
-        // HJI     validCliCommand = false;
-        // HJI     break;
-
-        ///////////////////////////////
 
         case 'p': // Primary Spektrum Raw Data
         	cliPrintF("%04X, %04X, %04X, %04X, %04X, %04X, %04X, %04X, %04X, %04X\n", primarySpektrumState.lostFrameCnt,

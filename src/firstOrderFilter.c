@@ -104,21 +104,12 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////
 
-#define BMP085_LOWPASS_TAU         0.05f
-#define BMP085_LOWPASS_SAMPLE_TIME 0.10f
-#define BMP085_LOWPASS_A           (2.0f * BMP085_LOWPASS_TAU / BMP085_LOWPASS_SAMPLE_TIME)
-#define BMP085_LOWPASS_GX1         (1.0f / (1.0f + BMP085_LOWPASS_A))
-#define BMP085_LOWPASS_GX2         (1.0f / (1.0f + BMP085_LOWPASS_A))
-#define BMP085_LOWPASS_GX3         ((1.0f - BMP085_LOWPASS_A) / (1.0f + BMP085_LOWPASS_A))
-
-///////////////////////////////////////
-
-#define MS5611_LOWPASS_TAU         0.05f
-#define MS5611_LOWPASS_SAMPLE_TIME 0.02f
-#define MS5611_LOWPASS_A           (2.0f * MS5611_LOWPASS_TAU / MS5611_LOWPASS_SAMPLE_TIME)
-#define MS5611_LOWPASS_GX1         (1.0f / (1.0f + MS5611_LOWPASS_A))
-#define MS5611_LOWPASS_GX2         (1.0f / (1.0f + MS5611_LOWPASS_A))
-#define MS5611_LOWPASS_GX3         ((1.0f - MS5611_LOWPASS_A) / (1.0f + MS5611_LOWPASS_A))
+#define PRESSURE_ALT_LOWPASS_TAU         0.05f
+#define PRESSURE_ALT_LOWPASS_SAMPLE_TIME 0.02f
+#define PRESSURE_ALT_LOWPASS_A           (2.0f * PRESSURE_ALT_LOWPASS_TAU / PRESSURE_ALT_LOWPASS_SAMPLE_TIME)
+#define PRESSURE_ALT_LOWPASS_GX1         (1.0f / (1.0f + PRESSURE_ALT_LOWPASS_A))
+#define PRESSURE_ALT_LOWPASS_GX2         (1.0f / (1.0f + PRESSURE_ALT_LOWPASS_A))
+#define PRESSURE_ALT_LOWPASS_GX3         ((1.0f - PRESSURE_ALT_LOWPASS_A) / (1.0f + PRESSURE_ALT_LOWPASS_A))
 
 ///////////////////////////////////////
 
@@ -181,19 +172,12 @@ void initFirstOrderFilter()
 
     ///////////////////////////////////
 
-    firstOrderFilters[BMP085_LOWPASS].gx1 = BMP085_LOWPASS_GX1;
-	firstOrderFilters[BMP085_LOWPASS].gx2 = BMP085_LOWPASS_GX2;
-	firstOrderFilters[BMP085_LOWPASS].gx3 = BMP085_LOWPASS_GX3;
-	firstOrderFilters[BMP085_LOWPASS].previousInput  = sensors.pressureAlt;
-    firstOrderFilters[BMP085_LOWPASS].previousOutput = sensors.pressureAlt;
+    firstOrderFilters[PRESSURE_ALT_LOWPASS].gx1 = PRESSURE_ALT_LOWPASS_GX1;
+	firstOrderFilters[PRESSURE_ALT_LOWPASS].gx2 = PRESSURE_ALT_LOWPASS_GX2;
+	firstOrderFilters[PRESSURE_ALT_LOWPASS].gx3 = PRESSURE_ALT_LOWPASS_GX3;
+	firstOrderFilters[PRESSURE_ALT_LOWPASS].previousInput  = sensors.pressureAlt50Hz;
+    firstOrderFilters[PRESSURE_ALT_LOWPASS].previousOutput = sensors.pressureAlt50Hz;
 
-    ///////////////////////////////////
-
-    firstOrderFilters[MS5611_LOWPASS].gx1 = MS5611_LOWPASS_GX1;
-	firstOrderFilters[MS5611_LOWPASS].gx2 = MS5611_LOWPASS_GX2;
-	firstOrderFilters[MS5611_LOWPASS].gx3 = MS5611_LOWPASS_GX3;
-	firstOrderFilters[MS5611_LOWPASS].previousInput  = sensors.pressureAlt;
-    firstOrderFilters[MS5611_LOWPASS].previousOutput = sensors.pressureAlt;
     ///////////////////////////////////
 
     firstOrderFilters[EARTH_AXIS_ACCEL_Z_HIGHPASS].gx1 = EARTH_AXIS_ACCEL_Z_HIGHPASS_GX1;

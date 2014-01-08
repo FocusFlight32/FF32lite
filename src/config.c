@@ -44,7 +44,7 @@ const char rcChannelLetters[] = "AERT1234";
 
 float vTailThrust;
 
-static uint8_t checkNewEEPROMConf = 5;
+static uint8_t checkNewEEPROMConf = 7;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -199,7 +199,7 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.escPwmRate   = 450;
         eepromConfig.servoPwmRate = 50;
 
-        eepromConfig.mixerConfiguration = MIXERTYPE_QUADX;
+        eepromConfig.mixerConfiguration = MIXERTYPE_TRI;
         eepromConfig.yawDirection = 1.0f;
 
         eepromConfig.triYawServoPwmRate = 50;
@@ -315,6 +315,10 @@ void checkFirstTime(bool eepromReset)
 
         eepromConfig.armCount             =  50;
         eepromConfig.disarmCount          =  0;
+
+        eepromConfig.activeTelemetry      =  0;
+
+    	eepromConfig.verticalVelocityHoldOnly = true;
 
         writeEEPROM();
 	}

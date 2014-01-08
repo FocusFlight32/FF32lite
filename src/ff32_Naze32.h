@@ -106,8 +106,7 @@ typedef struct sensors_t {
     float attitude500Hz[3];
     float gyro500Hz[3];
     float mag10Hz[3];
-    float pressureAlt;  // BMP085 at 10 Hz,  MS5611 at 50 Hz
-
+    float pressureAlt50Hz;
 } sensors_t;
 
 extern sensors_t sensors;

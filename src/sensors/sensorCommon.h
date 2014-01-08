@@ -29,22 +29,37 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "board.h"
+#pragma once
 
 ///////////////////////////////////////////////////////////////////////////////
 
-float           gyroRTBias[3];
+extern float           accelOneG;
 
-float           gyroTCBias[3];
+extern int16_t         accelData500Hz[3];
 
-int16_t         gyroData500Hz[3];
-
-int16andUint8_t rawGyro[3];
-
-uint8_t         mpuCalibrating = false;
-
-float           mpuTemperature;
-
-int16andUint8_t rawMpuTemperature;
+extern int16andUint8_t rawAccel[3];
 
 ///////////////////////////////////////////////////////////////////////////////
+
+extern float           gyroRTBias[3];
+
+extern float           gyroTCBias[3];
+
+extern int16_t         gyroData500Hz[3];
+
+extern int16andUint8_t rawGyro[3];
+
+extern uint8_t         mpuCalibrating;
+
+extern float           mpuTemperature;
+
+extern int16andUint8_t rawMpuTemperature;
+
+///////////////////////////////////////////////////////////////////////////////
+
+extern uint8_t         newPressureReading;
+
+extern uint8_t         newTemperatureReading;
+
+///////////////////////////////////////////////////////////////////////////////
+

@@ -62,8 +62,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "drv_spektrum.h"
 #include "drv_system.h"
 
-#include "accelCommon.h"
-#include "gyroCommon.h"
+#include "sensorCommon.h"
 
 #include "adxl345.h"
 #include "bmp085.h"

@@ -56,15 +56,13 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////
 
-float pressureAlt;
-
-int32_t pressureAverage;
-
-int32_t pressureSum;
-
 int32andUint8_t uncompensatedPressure;
 
+int32_t         uncompensatedPressureValue;
+
 int32andUint8_t uncompensatedTemperature;
+
+int32_t         uncompensatedTemperatureValue;
 
 int16andUint8_t ac1, ac2, ac3, b1, b2, mb, mc, md;
 
@@ -86,25 +84,6 @@ void bmp085ReadTemperatureRequestPressure(void)
 
     uncompensatedTemperature.bytes[1] = data[0];
     uncompensatedTemperature.bytes[0] = data[1];
-
-    i2cWrite(BMP085_ADDRESS, BMP085_CTRL_MEAS_REG, BMP085_P_MEASURE);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// BMP085 Read Pressure Request Pressure
-///////////////////////////////////////////////////////////////////////////////
-
-void bmp085ReadPressureRequestPressure(void)
-{
-    uint8_t data[3];
-
-    i2cRead(BMP085_ADDRESS, BMP085_ADC_OUT_MSB_REG, 3, data);
-
-    uncompensatedPressure.bytes[2] = data[0];
-    uncompensatedPressure.bytes[1] = data[1];
-    uncompensatedPressure.bytes[0] = data[2];
-
-    uncompensatedPressure.value = uncompensatedPressure.value >> (8 - OSS);
 
     i2cWrite(BMP085_ADDRESS, BMP085_CTRL_MEAS_REG, BMP085_P_MEASURE);
 }
@@ -134,7 +113,7 @@ void bmp085ReadPressureRequestTemperature(void)
 
 void calculateBmp085Temperature(void)
 {
-    x1 = ((uncompensatedTemperature.value - (int32_t) ac6.value) * (int32_t) ac5.value) >> 15;
+    x1 = ((uncompensatedTemperatureValue - (int32_t) ac6.value) * (int32_t) ac5.value) >> 15;
     x2 = ((int32_t) mc.value << 11) / (x1 + md.value);
     b5 = x1 + x2;
 }
@@ -154,14 +133,14 @@ void calculateBmp085PressureAltitude(void)
     x2 = (b1.value * ((b6 * b6) >> 12)) >> 16;
     x3 = ((x1 + x2) + 2) >> 2;
     b4 = (ac4.value * (uint32_t) (x3 + 32768)) >> 15;
-    b7 = (uint32_t) (pressureAverage - b3) * (50000 >> OSS);
+    b7 = (uint32_t) (uncompensatedPressureValue - b3) * (50000 >> OSS);
     p = b7 < 0x80000000 ? (b7 << 1) / b4 : (b7 / b4) << 1;
     x1 = (p >> 8) * (p >> 8);
     x1 = (x1 * 3038) >> 16;
     x2 = (-7357 * p) >> 16;
     p = p + ((x1 + x2 + 3791) >> 4);
 
-    pressureAlt = (44330.0f * (1.0f - pow((float) p / 101325.0f, 0.190295f)));
+    sensors.pressureAlt50Hz = (44330.0f * (1.0f - pow((float) p / 101325.0f, 0.190295f)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -212,6 +191,9 @@ void initBmp085(void)
     bmp085ReadPressureRequestTemperature();
 
     delay(10);
+
+    uncompensatedTemperatureValue = uncompensatedTemperature.value;
+    uncompensatedPressureValue    = uncompensatedPressure.value;
 
     calculateBmp085Temperature();
     calculateBmp085PressureAltitude();

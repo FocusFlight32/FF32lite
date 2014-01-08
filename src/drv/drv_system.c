@@ -164,14 +164,16 @@ void SysTick_Handler(void)
             }
             else
             {
-            	if (frameCounter == COUNT_100HZ)
-                    bmp085ReadTemperatureRequestPressure();
-                else if (frameCounter == FRAME_COUNT)
-                    bmp085ReadPressureRequestTemperature();
+            	if (!newTemperatureReading)
+                {
+					bmp085ReadTemperatureRequestPressure();
+					newTemperatureReading = true;
+				}
                 else
-                    bmp085ReadPressureRequestPressure();
-
-                pressureSum += uncompensatedPressure.value;
+                {
+					bmp085ReadPressureRequestTemperature();
+                    newPressureReading = true;
+				}
             }
         }
 

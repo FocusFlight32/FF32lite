@@ -33,7 +33,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define NUMBER_OF_FIRST_ORDER_FILTERS 9
+#define NUMBER_OF_FIRST_ORDER_FILTERS 8
 
 #define ACCEL500HZ_X_LOWPASS 0
 #define ACCEL500HZ_Y_LOWPASS 1
@@ -43,11 +43,9 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #define ACCEL100HZ_Y_LOWPASS 4
 #define ACCEL100HZ_Z_LOWPASS 5
 
-#define BMP085_LOWPASS       6
+#define PRESSURE_ALT_LOWPASS 6
 
-#define MS5611_LOWPASS       7
-
-#define EARTH_AXIS_ACCEL_Z_HIGHPASS 8
+#define EARTH_AXIS_ACCEL_Z_HIGHPASS 7
 
 ///////////////////////////////////////////////////////////////////////////////
 
