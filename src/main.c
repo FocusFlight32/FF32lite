@@ -145,7 +145,7 @@ int main(void)
             {
 			    computeMpu6050TCBias();
 
-                sensors.accel500Hz[XAXIS] = -((float)accelData500Hz[XAXIS] - accelTCBias[XAXIS]) * MPU6050_ACCEL_SCALE_FACTOR;
+                sensors.accel500Hz[XAXIS] =  ((float)accelData500Hz[XAXIS] - accelTCBias[XAXIS]) * MPU6050_ACCEL_SCALE_FACTOR;
                 sensors.accel500Hz[YAXIS] = -((float)accelData500Hz[YAXIS] - accelTCBias[YAXIS]) * MPU6050_ACCEL_SCALE_FACTOR;
                 sensors.accel500Hz[ZAXIS] = -((float)accelData500Hz[ZAXIS] - accelTCBias[ZAXIS]) * MPU6050_ACCEL_SCALE_FACTOR;
 

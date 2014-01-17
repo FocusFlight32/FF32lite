@@ -33,7 +33,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define MS5611_ADDRESS  0x76
+#define MS5611_ADDRESS  0x77
 
 //#define OSR  256  // 0.60 mSec conversion time (1666.67 Hz)
 //#define OSR  512  // 1.17 mSec conversion time ( 854.70 Hz)
