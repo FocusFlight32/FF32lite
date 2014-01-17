@@ -874,10 +874,16 @@ static void SetSysClockTo72(void)
     /* PCLK1 = HCLK */
     RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
 
-    /*  PLL configuration: PLLCLK = HSE * 9 = 72 MHz */
-    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
-                                        RCC_CFGR_PLLMULL));
-    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL9);
+    /*  PLL configuration: PLLCLK = HSE * 9 = 72 MHz for  8 MHz HSE, Naze32 Rev 4 and below */
+    /*  PLL configuration: PLLCLK = HSE * 6 = 72 MHz for 12 MHz HSE, Naze32 Rev 5 and up    */
+
+    RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
+
+    #ifdef REV5
+        RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL6);
+    #else
+        RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL9);
+    #endif
 
     /* Enable PLL */
     RCC->CR |= RCC_CR_PLLON;

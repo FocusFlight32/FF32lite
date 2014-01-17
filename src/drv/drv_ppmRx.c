@@ -32,54 +32,20 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "board.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-// Receiver Defines and Variables
+// PPM Receiver Defines and Variables
 ///////////////////////////////////////////////////////////////////////////////
 
 #define RX_PULSE_1p5MS 3000  // 1.5 ms pulse width
 
 uint8_t i;
 
-///////////////////////////////////////////////////////////////////////////////
-// PPM Receiver Defines and Variables
-///////////////////////////////////////////////////////////////////////////////
-
-static uint16_t pulseWidth[8];     // Computed pulse width
+uint16_t pulseWidth[8];      // Computed pulse width
 
 ///////////////////////////////////////////////////////////////////////////////
 // PPM Receiver Interrupt Handler
 ///////////////////////////////////////////////////////////////////////////////
 
-void TIM2_IRQHandler(void)
-{
-    uint16_t diff;
-    static uint16_t now;
-    static uint16_t last = 0;
-    static uint8_t  chan = 0;
-
-    if (TIM_GetITStatus(TIM2, TIM_IT_CC1) == SET)
-    {
-        last = now;
-        now = TIM_GetCapture1(TIM2);
-        rcActive = true;
-    }
-
-    TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
-
-    diff = now - last;
-
-    if (diff > 2700 * 2)   // Per http://www.rcgroups.com/forums/showpost.php?p=21996147&postcount=3960
-    {                      // "So, if you use 2.5ms or higher as being the reset for the PPM stream start,
-        chan = 0;          // you will be fine. I use 2.7ms just to be safe."
-    }
-    else
-    {
-        if (diff > 1500 && diff < 4500 && chan < 8)    // 750 to 2250 ms is our 'valid' channel range
-        {
-            pulseWidth[chan] = diff;
-        }
-        chan++;
-    }
-}
+// See drv_rxCommon.c
 
 ///////////////////////////////////////////////////////////////////////////////
 // PPM Receiver Initialization

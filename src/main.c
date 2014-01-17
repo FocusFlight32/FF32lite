@@ -180,8 +180,10 @@ int main(void)
 
             computeAxisCommands(dt500Hz);
             mixTable();
-            //writeServos();
             writeMotors();
+
+            if (eepromConfig.receiverType == SPEKTRUM)
+            	writeServos();
 
             executionTime500Hz = micros() - currentTime;
         }

@@ -130,13 +130,19 @@ void SysTick_Handler(void)
         {
             frame_500Hz = true;
 
-            readAdxl345();
+            if (eepromConfig.useMpu6050 == true)
+            {
+            	readMpu6050();
+            }
+            else
+            {
+            	readAdxl345();
+            	readMpu3050();
+            }
 
             accelData500Hz[XAXIS] = rawAccel[XAXIS].value;
             accelData500Hz[YAXIS] = rawAccel[YAXIS].value;
             accelData500Hz[ZAXIS] = rawAccel[ZAXIS].value;
-
-            readMpu3050();
 
             gyroData500Hz[ROLL ] = rawGyro[ROLL ].value;
 			gyroData500Hz[PITCH] = rawGyro[PITCH].value;

@@ -33,18 +33,11 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define FLASH_PAGE_COUNT 128
-
-#define FLASH_PAGE_SIZE                 ((uint16_t)0x400)
-
-// use the last KB for sensor config storage
-#define FLASH_WRITE_EEPROM_CONFIG_ADDR  (0x08000000 + (uint32_t)FLASH_PAGE_SIZE * (FLASH_PAGE_COUNT - 1))
+#define FLASH_WRITE_EEPROM_ADDR  0x0801FC00  // Last 1K of FLASH
 
 const char rcChannelLetters[] = "AERT1234";
 
-float vTailThrust;
-
-static uint8_t checkNewEEPROMConf = 7;
+static uint8_t checkNewEEPROMConf = 9;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -62,41 +55,102 @@ void parseRcChannels(const char *input)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void readEEPROM(void)
+uint32_t crc32bEEPROM(eepromConfig_t *e, int includeCRCAtEnd)
 {
-    // Read flash
-
-	memcpy(&eepromConfig, (char *)FLASH_WRITE_EEPROM_CONFIG_ADDR, sizeof(eepromConfig_t));
-
-	accConfidenceDecay = 1.0f / sqrt(eepromConfig.accelCutoff);
-
-	eepromConfig.yawDirection = constrain( eepromConfig.yawDirection, -1.0f, 1.0f );
+    return crc32B((uint32_t*)e, includeCRCAtEnd ? (uint32_t*)(e + 1) : e->CRCAtEnd);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void writeEEPROM(void)
+enum { eepromConfigNUMWORD = sizeof(eepromConfig_t)/sizeof(uint32_t) };
+
+///////////////////////////////////////////////////////////////////////////////
+
+void readEEPROM(void)
+{
+    eepromConfig_t *dst = &eepromConfig;
+
+    *dst = *(eepromConfig_t*)FLASH_WRITE_EEPROM_ADDR;
+
+    if ( crcCheckVal != crc32bEEPROM(dst, true) )
+    {
+        evrPush(EVR_FlashCRCFail,0);
+        dst->CRCFlags |= CRC_HistoryBad;
+    }
+    else if ( dst->CRCFlags & CRC_HistoryBad )
+        evrPush(EVR_ConfigBadHistory,0);
+
+    ///////////////////////////////////
+
+    accConfidenceDecay = 1.0f / sqrt(eepromConfig.accelCutoff);
+
+	if (eepromConfig.yawDirection >= 0)
+	    eepromConfig.yawDirection = 1.0f;
+	else
+        eepromConfig.yawDirection = -1.0f;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+uint8_t writeEEPROM(void)
 {
     FLASH_Status status;
-    uint32_t i;
+    int32_t i;
+
+    //uint32_t       *dst = (uint32_t*)FLASH_WRITE_EEPROM_ADDR;
+    eepromConfig_t *src = &eepromConfig;
+
+    // there's no reason to write these values to EEPROM, they'll just be noise
+    zeroPIDintegralError();
+    zeroPIDstates();
+
+    if (src->CRCFlags & CRC_HistoryBad)
+        evrPush(EVR_ConfigBadHistory,0);
+
+    eepromConfig.CRCAtEnd[0] = crc32B( (uint32_t*)&src[0], src->CRCAtEnd);
 
     FLASH_Unlock();
 
     FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPRTERR);
 
-    if (FLASH_ErasePage(FLASH_WRITE_EEPROM_CONFIG_ADDR) == FLASH_COMPLETE)
+    status = FLASH_ErasePage(FLASH_WRITE_EEPROM_ADDR);
+
+    //-----------------------------------------------------
+
+    //i = -1;
+
+    //while (status == FLASH_COMPLETE && i++ < eepromConfigNUMWORD)
+    //    status = FLASH_ProgramWord((uint32_t)&dst[i], ((uint32_t*)src)[i]);
+
+    //if (status != FLASH_COMPLETE)
+    //    evrPush( i == -1 ? EVR_FlashEraseFail : EVR_FlashProgramFail, status);
+
+    //-----------------------------------------------------
+
+    if (status == FLASH_COMPLETE)
     {
         for (i = 0; i < sizeof(eepromConfig_t); i += 4)
         {
-            status = FLASH_ProgramWord(FLASH_WRITE_EEPROM_CONFIG_ADDR + i, *(uint32_t *)((char *)&eepromConfig + i));
+            status = FLASH_ProgramWord(FLASH_WRITE_EEPROM_ADDR + i, *(uint32_t *)((char *)&eepromConfig + i));
             if (status != FLASH_COMPLETE)
-                break; // TODO: fail
+            {
+                evrPush(EVR_FlashProgramFail, status);
+                break;
+			}
         }
     }
+    else
+    {
+		evrPush(EVR_FlashEraseFail, status);
+	}
+
+    //-----------------------------------------------------
 
     FLASH_Lock();
 
     readEEPROM();
+
+    return status;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,7 +159,7 @@ void checkFirstTime(bool eepromReset)
 {
     uint8_t test_val;
 
-    test_val = *(uint8_t *)FLASH_WRITE_EEPROM_CONFIG_ADDR;
+    test_val = *(uint8_t *)FLASH_WRITE_EEPROM_ADDR;
 
     if (eepromReset || test_val != checkNewEEPROMConf)
     {
@@ -319,6 +373,8 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.activeTelemetry      =  0;
 
     	eepromConfig.verticalVelocityHoldOnly = true;
+
+    	eepromConfig.CRCFlags = 0;
 
         writeEEPROM();
 	}

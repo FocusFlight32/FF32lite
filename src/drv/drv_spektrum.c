@@ -424,22 +424,10 @@ void USART1_IRQHandler(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Timer 3 Interrupt Handler - Updates times used by Spektrum Parser
+// TIM2 Interrupt Handler - Updates times used by Spektrum Parser
 ///////////////////////////////////////////////////////////////////////////////
 
-void TIM3_IRQHandler(void)
-{
-    TIM_ClearFlag(TIM3, TIM_FLAG_Update);
-
-    if (primarySpektrumState.spektrumTimer)
-        --primarySpektrumState.spektrumTimer;
-
-    if ((eepromConfig.slaveSpektrum == true)  && false)  // HJI Inhibit Slave Spektrum on Naze32
-    {
-	    if (slaveSpektrumState.spektrumTimer)
-            --slaveSpektrumState.spektrumTimer;
-    }
-}
+// See drv_rxCommon.c
 
 ///////////////////////////////////////////////////////////////////////////////
 // Spektrum Initialization
@@ -459,7 +447,7 @@ void spektrumInit(void)
 
     ///////////////////////////////////
 
-    NVIC_InitStructure.NVIC_IRQChannel                   = TIM3_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannel                   = TIM2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;
@@ -471,13 +459,13 @@ void spektrumInit(void)
     TIM_TimeBaseStructure.TIM_CounterMode       = TIM_CounterMode_Down;
     TIM_TimeBaseStructure.TIM_RepetitionCounter = 0x0000;
 
-    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+    TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 
-    TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
+    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 
-    TIM_ClearFlag(TIM3, TIM_FLAG_Update);
+    TIM_ClearFlag(TIM2, TIM_FLAG_Update);
 
-    TIM_Cmd(TIM3, ENABLE);
+    TIM_Cmd(TIM2, ENABLE);
 
     ///////////////////////////////////
 

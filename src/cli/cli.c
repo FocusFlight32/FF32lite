@@ -591,6 +591,15 @@ void cliCom(void)
 
         ///////////////////////////////
 
+        case 'U': // EEPROM CLI
+            eepromCLI();
+
+            cliQuery = 'x';
+          	validCliCommand = false;
+           	break;
+
+        ///////////////////////////////
+
         case 'V': // Reset EEPROM Parameters
             cliPrint( "\nEEPROM Parameters Reset....\n" );
             checkFirstTime(true);
@@ -667,7 +676,7 @@ void cliCom(void)
    		    cliPrint("'r' Mode States                            'R' Reset and Enter Bootloader\n");
    		    cliPrint("'s' Raw Receiver Commands                  'S' Reset\n");
    		    cliPrint("'t' Processed Receiver Commands            'T' Telemetry CLI\n");
-   		    cliPrint("'u' Command In Detent Discretes            'U' Not Used\n");
+   		    cliPrint("'u' Command In Detent Discretes            'U' EEPROM CLI\n");
    		    cliPrint("'v' Motor PWM Outputs                      'V' Reset EEPROM Parameters\n");
    		    cliPrint("'w' Not Used                               'W' Write EEPROM Parameters\n");
    		    cliPrint("'x' Terminate Serial Communication         'X' Not Used\n");

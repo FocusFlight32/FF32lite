@@ -36,6 +36,7 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.1136988749" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_MD"/>
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="REV4"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.other.otherflags.1403732138" name="Other flags" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.other.otherflags" value="-c -fmessage-length=0 -fomit-frame-pointer" valueType="string"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.1709115998" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
@@ -79,7 +80,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Libraries/CMSIS/DSP_Lib|Libraries/STM32_USB-FS-Device_Driver|Documentation" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c|Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Libraries/CMSIS/DSP_Lib|Libraries/STM32_USB-FS-Device_Driver|Documentation" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

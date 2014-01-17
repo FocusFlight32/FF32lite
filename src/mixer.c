@@ -68,13 +68,13 @@ void initMixer(void)
 // Write to Servos
 ///////////////////////////////////////////////////////////////////////////////
 
-// HJI void writeServos(void)
-// HJI {
-// HJI     pwmServoWrite(0, (uint16_t)servo[0]);
-// HJI     pwmServoWrite(1, (uint16_t)servo[1]);
-// HJI     pwmServoWrite(2, (uint16_t)servo[2]);
-// HJI     pwmServoWrite(3, (uint16_t)servo[3]);
-// HJI }
+void writeServos(void)
+{
+    pwmServoWrite(0, (uint16_t)servo[0]);
+    pwmServoWrite(1, (uint16_t)servo[1]);
+    pwmServoWrite(2, (uint16_t)servo[2]);
+    pwmServoWrite(3, (uint16_t)servo[3]);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Write to Motors

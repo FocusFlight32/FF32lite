@@ -131,20 +131,20 @@ void readMpu6050(void)
 
     i2cRead(MPU6050_ADDRESS, MPU6050_ACCEL_XOUT_H, 14, I2C2_Buffer_Rx);
 
-    rawAccel[YAXIS].bytes[1]   = I2C2_Buffer_Rx[ 0];
-    rawAccel[YAXIS].bytes[0]   = I2C2_Buffer_Rx[ 1];
-    rawAccel[XAXIS].bytes[1]   = I2C2_Buffer_Rx[ 2];
-    rawAccel[XAXIS].bytes[0]   = I2C2_Buffer_Rx[ 3];
+    rawAccel[XAXIS].bytes[1]   = I2C2_Buffer_Rx[ 0];
+    rawAccel[XAXIS].bytes[0]   = I2C2_Buffer_Rx[ 1];
+    rawAccel[YAXIS].bytes[1]   = I2C2_Buffer_Rx[ 2];
+    rawAccel[YAXIS].bytes[0]   = I2C2_Buffer_Rx[ 3];
     rawAccel[ZAXIS].bytes[1]   = I2C2_Buffer_Rx[ 4];
     rawAccel[ZAXIS].bytes[0]   = I2C2_Buffer_Rx[ 5];
 
     rawMpuTemperature.bytes[1] = I2C2_Buffer_Rx[ 6];
     rawMpuTemperature.bytes[0] = I2C2_Buffer_Rx[ 7];
 
-    rawGyro[PITCH].bytes[1]    = I2C2_Buffer_Rx[ 8];
-    rawGyro[PITCH].bytes[0]    = I2C2_Buffer_Rx[ 9];
-    rawGyro[ROLL ].bytes[1]    = I2C2_Buffer_Rx[10];
-    rawGyro[ROLL ].bytes[0]    = I2C2_Buffer_Rx[11];
+    rawGyro[ROLL ].bytes[1]    = I2C2_Buffer_Rx[ 8];
+    rawGyro[ROLL ].bytes[0]    = I2C2_Buffer_Rx[ 9];
+    rawGyro[PITCH].bytes[1]    = I2C2_Buffer_Rx[10];
+    rawGyro[PITCH].bytes[0]    = I2C2_Buffer_Rx[11];
     rawGyro[YAW  ].bytes[1]    = I2C2_Buffer_Rx[12];
     rawGyro[YAW  ].bytes[0]    = I2C2_Buffer_Rx[13];
 }

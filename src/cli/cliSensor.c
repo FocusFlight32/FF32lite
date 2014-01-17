@@ -103,7 +103,7 @@ void sensorCLI()
 
                 if (eepromConfig.useMpu6050 == true)
                 {
-                	cliPrint("MPU6000 DLPF:                 ");
+                	cliPrint("MPU6050 DLPF:                 ");
                     switch(eepromConfig.dlpfSetting)
                     {
                         case DLPF_256HZ:
@@ -255,6 +255,7 @@ void sensorCLI()
                     }
 
                     i2cWrite(MPU6050_ADDRESS, MPU6050_CONFIG, eepromConfig.dlpfSetting);  // Accel and Gyro DLPF Setting
+
                     sensorQuery = 'a';
                     validQuery = true;
                 }

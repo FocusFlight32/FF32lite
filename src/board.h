@@ -54,11 +54,12 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 #include "drv_adc.h"
 #include "drv_cli.h"
+#include "drv_crc.h"
 #include "drv_gpio.h"
 #include "drv_i2c.h"
 #include "drv_ppmRx.h"
 #include "drv_pwmEsc.h"
-// HJI #include "drv_pwmServo.h"
+#include "drv_pwmServo.h"
 #include "drv_spektrum.h"
 #include "drv_system.h"
 
