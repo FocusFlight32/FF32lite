@@ -205,8 +205,8 @@ void receiverCLI()
 			   	cliPrint("'a' Receiver Configuration Data            'A' Set RX Input Type                    AX, 1=PPM, 2=Spektrum\n");
    		        cliPrint("                                           'B' Set RC Control Order                 BTAER1234\n");
 			   	cliPrint("                                           'C' Toggle Slave Spektrum State\n");
-			   	cliPrint("                                           'D' Set RC Control Points                EmidCmd;minChk;maxChk;minThrot;maxThrot\n");
-			   	cliPrint("                                           'E' Set Arm/Disarm Counts                FarmCount;disarmCount\n");
+			   	cliPrint("                                           'D' Set RC Control Points                DmidCmd;minChk;maxChk;minThrot;maxThrot\n");
+			   	cliPrint("                                           'E' Set Arm/Disarm Counts                EarmCount;disarmCount\n");
 			   	cliPrint("                                           'F' Set Maximum Rate Command\n");
 			   	cliPrint("                                           'G' Set Maximum Attitude Command\n");
 			   	cliPrint("                                           'W' Write EEPROM Parameters\n");
