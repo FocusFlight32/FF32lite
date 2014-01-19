@@ -43,6 +43,8 @@ void receiverCLI()
     uint8_t  receiverQuery = 'x';
     uint8_t  validQuery    = false;
 
+    NVIC_InitTypeDef  NVIC_InitStructure;
+
     cliBusy = true;
 
     cliPrint("\nEntering Receiver CLI....\n\n");
@@ -117,16 +119,30 @@ void receiverCLI()
 
             ///////////////////////////
 
-            case 'A': // Read RX Input Type
-                eepromConfig.receiverType = (uint8_t)readFloatCLI();
-			    cliPrint( "\nReceiver Type Changed....\n");
+            case 'A': // Toggle PPM/Spektrum Satellite Receiver
+            	NVIC_InitStructure.NVIC_IRQChannel                   = TIM2_IRQn;
+            	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+            	NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 1;
+            	NVIC_InitStructure.NVIC_IRQChannelCmd                = DISABLE;
 
-			    cliPrint("\nSystem Resetting....\n");
-			    delay(100);
-			    writeEEPROM();
-			    systemReset(false);
+            	NVIC_Init(&NVIC_InitStructure);
 
-		        break;
+            	if (eepromConfig.receiverType == PPM)
+                {
+                	TIM_ITConfig(TIM2, TIM_IT_CC1, DISABLE);
+                	eepromConfig.receiverType = SPEKTRUM;
+                    spektrumInit();
+                }
+                else
+                {
+                	TIM_ITConfig(TIM2, TIM_IT_Update, DISABLE);
+                  	eepromConfig.receiverType = PPM;
+                    ppmRxInit();
+                }
+
+                receiverQuery = 'a';
+                validQuery = true;
+                break;
 
             ///////////////////////////
 
@@ -202,9 +218,8 @@ void receiverCLI()
 
 			case '?':
 			   	cliPrint("\n");
-			   	cliPrint("'a' Receiver Configuration Data            'A' Set RX Input Type                    AX, 1=PPM, 2=Spektrum\n");
+			   	cliPrint("'a' Receiver Configuration Data            'A' Toggle PPM/Spektrum Receiver\n");
    		        cliPrint("                                           'B' Set RC Control Order                 BTAER1234\n");
-			   	cliPrint("                                           'C' Toggle Slave Spektrum State\n");
 			   	cliPrint("                                           'D' Set RC Control Points                DmidCmd;minChk;maxChk;minThrot;maxThrot\n");
 			   	cliPrint("                                           'E' Set Arm/Disarm Counts                EarmCount;disarmCount\n");
 			   	cliPrint("                                           'F' Set Maximum Rate Command\n");
