@@ -69,8 +69,8 @@ void computeAxisCommands(float dt)
 
     if (flightMode == RATE)
     {
-        rateCmd[ROLL ] = rxCommand[ROLL ] * eepromConfig.rateScaling;
-        rateCmd[PITCH] = rxCommand[PITCH] * eepromConfig.rateScaling;
+        rateCmd[ROLL ] = rxCommand[ROLL ] * eepromConfig.rollAndPitchRateScaling;
+        rateCmd[PITCH] = rxCommand[PITCH] * eepromConfig.rollAndPitchRateScaling;
     }
     else
     {
@@ -83,7 +83,7 @@ void computeAxisCommands(float dt)
     if (headingHoldEngaged == true)  // Heading Hold is ON
         rateCmd[YAW] = updatePID( headingReference, sensors.attitude500Hz[YAW], dt, holdIntegrators, &eepromConfig.PID[HEADING_PID] );
     else                             // Heading Hold is OFF
-        rateCmd[YAW] = rxCommand[YAW] * eepromConfig.rateScaling;
+        rateCmd[YAW] = rxCommand[YAW] * eepromConfig.yawRateScaling;
 
     ///////////////////////////////////
 
