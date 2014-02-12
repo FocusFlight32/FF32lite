@@ -670,7 +670,7 @@ void cliCom(void)
    		    cliPrint("\n");
    		    cliPrint("'m' Axis PIDs                              'M' Not Used\n");
    		    cliPrint("'n' Not Used                               'N' Mixer CLI\n");
-   		    cliPrint("'o' Battery Voltage                        'O' Receiver CLI\n");
+   		    cliPrint("'o' Not Used                               'O' Receiver CLI\n");
    		    cliPrint("'p' Not Used                               'P' Sensor CLI\n");
    		    cliPrint("'q' Primary Spektrum Raw Data              'Q' Not Used\n");
    		    cliPrint("'r' Mode States                            'R' Reset and Enter Bootloader\n");

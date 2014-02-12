@@ -340,6 +340,11 @@ void systemInit(void)
     else
     	cliPrint("Using BMP085....\n\n");
 
+    if (eepromConfig.receiverType == PPM)
+    	cliPrint("Using PPM Receiver....\n\n");
+    else
+    	cliPrint("Using Spektrum Satellite Receiver....\n\n");
+
     delay(10000);  // Remaining 10 seconds of 20 second delay for sensor stabilization - probably not long enough..
 
     LED1_ON;
