@@ -273,7 +273,7 @@ int main(void)
 			deltaTime5Hz    = currentTime - previous5HzTime;
 			previous5HzTime = currentTime;
 
-			while (batMonVeryLowWarning > 0)
+			if (batMonVeryLowWarning > 0)
 			{
 				BEEP_TOGGLE;
 				batMonVeryLowWarning--;
@@ -303,7 +303,7 @@ int main(void)
 				pwmEscInit();
 			}
 
-			while (batMonLowWarning > 0)
+			if (batMonLowWarning > 0)
 			{
 				BEEP_TOGGLE;
 				batMonLowWarning--;

@@ -45,9 +45,9 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////
 
-#define BEEP_OFF         GPIO_ResetBits(LED0_GPIO,       BEEP_PIN)
-#define BEEP_ON          GPIO_SetBits(LED0_GPIO,         BEEP_PIN)
-#define BEEP_TOGGLE      GPIO_ToggleBits(LED0_GPIO,      BEEP_PIN)
+#define BEEP_OFF         GPIO_SetBits(BEEP_GPIO,         BEEP_PIN)
+#define BEEP_ON          GPIO_ResetBits(BEEP_GPIO,       BEEP_PIN)
+#define BEEP_TOGGLE      GPIO_ToggleBits(BEEP_GPIO,      BEEP_PIN)
 
 #define LED0_OFF         GPIO_SetBits(LED0_GPIO,         LED0_PIN)
 #define LED0_ON          GPIO_ResetBits(LED0_GPIO,       LED0_PIN)
