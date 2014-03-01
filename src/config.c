@@ -37,7 +37,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 const char rcChannelLetters[] = "AERT1234";
 
-static uint8_t checkNewEEPROMConf = 1;
+static uint8_t checkNewEEPROMConf = 5;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -97,8 +97,19 @@ uint8_t writeEEPROM(void)
     FLASH_Status status;
     int32_t i;
 
-    //uint32_t       *dst = (uint32_t*)FLASH_WRITE_EEPROM_ADDR;
+    ///////////////////////////////////
+
+    if (eepromConfig.receiverType == SPEKTRUM)
+    {
+    	USART_Cmd(USART2, DISABLE);
+
+        TIM_Cmd(TIM2, DISABLE);
+    }
+
+    ///////////////////////////////////
+
     eepromConfig_t *src = &eepromConfig;
+    uint32_t       *dst = (uint32_t*)FLASH_WRITE_EEPROM_ADDR;
 
     // there's no reason to write these values to EEPROM, they'll just be noise
     zeroPIDintegralError();
@@ -107,7 +118,7 @@ uint8_t writeEEPROM(void)
     if (src->CRCFlags & CRC_HistoryBad)
         evrPush(EVR_ConfigBadHistory,0);
 
-    eepromConfig.CRCAtEnd[0] = crc32B( (uint32_t*)&src[0], src->CRCAtEnd);
+    src->CRCAtEnd[0] = crc32B( (uint32_t*)&src[0], src->CRCAtEnd);
 
     FLASH_Unlock();
 
@@ -115,40 +126,34 @@ uint8_t writeEEPROM(void)
 
     status = FLASH_ErasePage(FLASH_WRITE_EEPROM_ADDR);
 
-    //-----------------------------------------------------
+    ///////////////////////////////////
 
-    //i = -1;
+    i = -1;
 
-    //while (status == FLASH_COMPLETE && i++ < eepromConfigNUMWORD)
-    //    status = FLASH_ProgramWord((uint32_t)&dst[i], ((uint32_t*)src)[i]);
+    while (status == FLASH_COMPLETE && i++ < eepromConfigNUMWORD)
+        status = FLASH_ProgramWord((uint32_t)&dst[i], ((uint32_t*)src)[i]);
 
-    //if (status != FLASH_COMPLETE)
-    //    evrPush( i == -1 ? EVR_FlashEraseFail : EVR_FlashProgramFail, status);
+    if (status != FLASH_COMPLETE)
+        evrPush( i == -1 ? EVR_FlashEraseFail : EVR_FlashProgramFail, status);
 
-    //-----------------------------------------------------
-
-    if (status == FLASH_COMPLETE)
-    {
-        for (i = 0; i < sizeof(eepromConfig_t); i += 4)
-        {
-            status = FLASH_ProgramWord(FLASH_WRITE_EEPROM_ADDR + i, *(uint32_t *)((char *)&eepromConfig + i));
-            if (status != FLASH_COMPLETE)
-            {
-                evrPush(EVR_FlashProgramFail, status);
-                break;
-			}
-        }
-    }
-    else
-    {
-		evrPush(EVR_FlashEraseFail, status);
-	}
-
-    //-----------------------------------------------------
+    ///////////////////////////////////
 
     FLASH_Lock();
 
     readEEPROM();
+
+    ///////////////////////////////////
+
+    if (eepromConfig.receiverType == SPEKTRUM)
+    {
+    	primarySpektrumState.reSync = 1;
+
+    	TIM_Cmd(TIM2, ENABLE);
+
+    	USART_Cmd(USART2, ENABLE);
+    }
+
+    ///////////////////////////////////
 
     return status;
 }
@@ -262,6 +267,34 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.triYawServoMin     = 2000.0f;
         eepromConfig.triYawServoMid     = 3000.0f;
         eepromConfig.triYawServoMax     = 4000.0f;
+        eepromConfig.triCopterYawCmd500HzLowPassTau = 0.05f;
+
+        // Free Mix Defaults to Quad X
+		eepromConfig.freeMixMotors        = 4;
+
+		eepromConfig.freeMix[0][ROLL ]    =  1.0f;
+		eepromConfig.freeMix[0][PITCH]    = -1.0f;
+		eepromConfig.freeMix[0][YAW  ]    = -1.0f;
+
+		eepromConfig.freeMix[1][ROLL ]    = -1.0f;
+		eepromConfig.freeMix[1][PITCH]    = -1.0f;
+		eepromConfig.freeMix[1][YAW  ]    =  1.0f;
+
+		eepromConfig.freeMix[2][ROLL ]    = -1.0f;
+		eepromConfig.freeMix[2][PITCH]    =  1.0f;
+		eepromConfig.freeMix[2][YAW  ]    = -1.0f;
+
+		eepromConfig.freeMix[3][ROLL ]    =  1.0f;
+		eepromConfig.freeMix[3][PITCH]    =  1.0f;
+		eepromConfig.freeMix[3][YAW  ]    =  1.0f;
+
+		eepromConfig.freeMix[4][ROLL ]    =  0.0f;
+		eepromConfig.freeMix[4][PITCH]    =  0.0f;
+		eepromConfig.freeMix[4][YAW  ]    =  0.0f;
+
+		eepromConfig.freeMix[5][ROLL ]    =  0.0f;
+		eepromConfig.freeMix[5][PITCH]    =  0.0f;
+        eepromConfig.freeMix[5][YAW  ]    =  0.0f;
 
         eepromConfig.midCommand   = 3000.0f;
         eepromConfig.minCheck     = (float)(MINCOMMAND + 200);
@@ -368,6 +401,10 @@ void checkFirstTime(bool eepromReset)
 		eepromConfig.batteryCells         = 3;
 		eepromConfig.voltageMonitorScale  = 11.0f / 1.0f;
 		eepromConfig.voltageMonitorBias   = 0.0f;
+
+        eepromConfig.batteryLow           = 3.30f;
+        eepromConfig.batteryVeryLow       = 3.20f;
+        eepromConfig.batteryMaxLow        = 3.10f;
 
         eepromConfig.armCount             =  50;
         eepromConfig.disarmCount          =  0;
