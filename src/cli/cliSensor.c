@@ -135,6 +135,10 @@ void sensorCLI()
                 cliPrintF("Voltage Monitor Bias:      %9.4f\n", eepromConfig.voltageMonitorBias);
                 cliPrintF("Number of Battery Cells:      %1d\n\n", eepromConfig.batteryCells);
 
+                cliPrintF("Battery Low Setpoint:      %4.2f volts\n",   eepromConfig.batteryLow);
+                cliPrintF("Battery Very Low Setpoint: %4.2f volts\n",   eepromConfig.batteryVeryLow);
+                cliPrintF("Battery Max Low Setpoint:  %4.2f volts\n\n", eepromConfig.batteryMaxLow);
+
                 validQuery = false;
                 break;
 
@@ -303,6 +307,21 @@ void sensorCLI()
 
             ///////////////////////////
 
+            case 'N': // Set Voltage Monitor Trip Points
+                eepromConfig.batteryLow     = readFloatCLI();
+                eepromConfig.batteryVeryLow = readFloatCLI();
+                eepromConfig.batteryMaxLow  = readFloatCLI();
+
+                thresholds[BATTERY_LOW].value      = eepromConfig.batteryLow;
+                thresholds[BATTERY_VERY_LOW].value = eepromConfig.batteryVeryLow;
+                thresholds[BATTRY_MAX_LOW].value   = eepromConfig.batteryMaxLow;
+
+                sensorQuery = 'a';
+                validQuery = true;
+                break;
+
+            ///////////////////////////
+
             case 'V': // Set Voltage Monitor Parameters
                 eepromConfig.voltageMonitorScale = readFloatCLI();
                 eepromConfig.voltageMonitorBias  = readFloatCLI();
@@ -316,6 +335,8 @@ void sensorCLI()
 
             case 'W': // Write EEPROM Parameters
                 cliPrint("\nWriting EEPROM Parameters....\n\n");
+
+                validQuery = false;
                 writeEEPROM();
                 break;
 
@@ -339,6 +360,7 @@ void sensorCLI()
 
 			   	cliPrint("                                           'E' Set h dot est/h est Comp Filter A/B  EA;B\n");
 			   	cliPrint("'m' Toggle MPU3050/MPU6050\n");
+			   	cliPrint("                                           'N' Set Voltage Monitor Trip Points      Nlow;veryLow;maxLow\n");
 			   	cliPrint("'p' Toggle BMP085/MS5611\n");
 			   	cliPrint("'v' Toggle Vertical Velocity Hold Only     'V' Set Voltage Monitor Parameters       Vscale;bias;cells\n");
 			    cliPrint("                                           'W' Write EEPROM Parameters\n");
