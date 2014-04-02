@@ -100,7 +100,8 @@ typedef volatile uint8_t semaphore_t;
 // Sensor Variables
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef struct sensors_t {
+typedef struct sensors_t
+{
     float accel500Hz[3];
     float accel100Hz[3];
     float attitude500Hz[3];
@@ -110,6 +111,13 @@ typedef struct sensors_t {
 } sensors_t;
 
 extern sensors_t sensors;
+
+typedef struct homeData_t
+{
+	float   magHeading;
+} homeData_t;
+
+extern homeData_t homeData;
 
 ///////////////////////////////////////////////////////////////////////////////
 // PID Definitions

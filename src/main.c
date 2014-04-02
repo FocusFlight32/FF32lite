@@ -39,6 +39,8 @@ uint8_t        execUpCount = 0;
 
 sensors_t      sensors;
 
+homeData_t     homeData;
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main(void)
@@ -298,9 +300,13 @@ int main(void)
 			if ((execUpCount == 5) && (execUp == false))
 			{
 				execUp = true;
+
 				LED0_OFF;
 				LED1_OFF;
+
 				pwmEscInit();
+
+				homeData.magHeading = sensors.attitude500Hz[YAW];
 			}
 
 			if (batMonLowWarning > 0)
