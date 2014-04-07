@@ -108,7 +108,7 @@ void SysTick_Handler(void)
 
     if ((systemReady        == true ) &&
     	(cliBusy            == false) &&
-    	(adxl345Calibrating == false) &&
+    	(accelCalibrating   == false) &&
     	(escCalibrating     == false) &&
     	(magCalibrating     == false) &&
     	(mpuCalibrating     == false))

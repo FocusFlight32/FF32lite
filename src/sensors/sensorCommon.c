@@ -33,6 +33,8 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
+uint8_t         accelCalibrating = false;
+
 float           accelOneG = 9.8065;
 
 int16_t         accelData500Hz[3];

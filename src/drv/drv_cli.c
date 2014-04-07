@@ -47,21 +47,32 @@ volatile uint8_t rxBuffer[UART_BUFFER_SIZE];
 uint32_t rxDMAPos = 0;
 
 volatile uint8_t txBuffer[UART_BUFFER_SIZE];
-uint32_t txBufferTail = 0;
-uint32_t txBufferHead = 0;
+volatile uint32_t txBufferTail = 0;
+volatile uint32_t txBufferHead = 0;
+
+volatile uint8_t  txDmaEnabled = false;
 
 ///////////////////////////////////////////////////////////////////////////////
 
 static void uartTxDMA(void)
 {
+    if ((txDmaEnabled == true) || (txBufferHead == txBufferTail))  // Ignore call if already active or no new data in buffer
+        return;
+
     DMA1_Channel4->CMAR = (uint32_t) & txBuffer[txBufferTail];
-    if (txBufferHead > txBufferTail) {
+
+    if (txBufferHead > txBufferTail)
+    {
         DMA1_Channel4->CNDTR = txBufferHead - txBufferTail;
         txBufferTail = txBufferHead;
-    } else {
+    }
+    else
+    {
         DMA1_Channel4->CNDTR = UART_BUFFER_SIZE - txBufferTail;
         txBufferTail = 0;
     }
+
+    txDmaEnabled = true;
 
     DMA_Cmd(DMA1_Channel4, ENABLE);
 }
@@ -73,8 +84,9 @@ void DMA1_Channel4_IRQHandler(void)
     DMA_ClearITPendingBit(DMA1_IT_TC4);
     DMA_Cmd(DMA1_Channel4, DISABLE);
 
-    if (txBufferHead != txBufferTail)
-        uartTxDMA();
+    txDmaEnabled = false;
+
+    uartTxDMA();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -131,7 +143,9 @@ void cliInit(uint32_t baudRate)
     USART_Init(USART1, &USART_InitStructure);
 
     // Receive DMA into a circular buffer
+
     DMA_DeInit(DMA1_Channel5);
+
     DMA_InitStructure.DMA_Priority           = DMA_Priority_Medium;
     DMA_InitStructure.DMA_M2M                = DMA_M2M_Disable;
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) & USART1->DR;
@@ -147,10 +161,13 @@ void cliInit(uint32_t baudRate)
     DMA_Init(DMA1_Channel5, &DMA_InitStructure);
 
     DMA_Cmd(DMA1_Channel5, ENABLE);
+
     USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);
+
     rxDMAPos = DMA_GetCurrDataCounter(DMA1_Channel5);
 
     // Transmit DMA
+
     DMA_DeInit(DMA1_Channel4);
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) & USART1->DR;
     DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;
@@ -216,9 +233,7 @@ void cliWrite(uint8_t ch)
     txBuffer[txBufferHead] = ch;
     txBufferHead = (txBufferHead + 1) % UART_BUFFER_SIZE;
 
-    // if DMA wasn't enabled, fire it up
-    if (!(DMA1_Channel4->CCR & 1))
-        uartTxDMA();
+    uartTxDMA();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -244,6 +259,23 @@ void cliPrintF(const char * fmt, ...)
 	vsnprintf(buf, sizeof(buf), fmt, vlist);
 	cliPrint(buf);
 	va_end(vlist);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CLI Print Binary String
+///////////////////////////////////////////////////////////////////////////////
+
+void cliPrintBinary(uint8_t *buf, uint16_t length)
+{
+    uint16_t i;
+
+   for (i = 0; i < length; i++)
+    {
+    	txBuffer[txBufferHead] = buf[i];
+    	txBufferHead = (txBufferHead + 1) % UART_BUFFER_SIZE;
+    }
+
+	uartTxDMA();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -75,23 +75,23 @@ void sensorCLI()
             	else
             	{
             		cliPrint("\nUsing ADXL345/MPU3050....\n\n");
-            		cliPrintF("Accel Scale Factor:        %9.4f, %9.4f, %9.4f\n", eepromConfig.accelScaleFactor[XAXIS],
-                                                		                          eepromConfig.accelScaleFactor[YAXIS],
-                                                		                          eepromConfig.accelScaleFactor[ZAXIS]);
-                    cliPrintF("Accel Bias:                %9.4f, %9.4f, %9.4f\n", eepromConfig.accelBias[XAXIS],
-                                                		                          eepromConfig.accelBias[YAXIS],
-                                                		                          eepromConfig.accelBias[ZAXIS]);
             	}
 
-                cliPrintF("Gyro Temp Comp Slope:      %9.4f, %9.4f, %9.4f\n",   eepromConfig.gyroTCBiasSlope[ROLL ],
-            	                                                                eepromConfig.gyroTCBiasSlope[PITCH],
-            	                                                                eepromConfig.gyroTCBiasSlope[YAW  ]);
-            	cliPrintF("Gyro Temp Comp Intercept:  %9.4f, %9.4f, %9.4f\n",   eepromConfig.gyroTCBiasIntercept[ROLL ],
-            	                                                                eepromConfig.gyroTCBiasIntercept[PITCH],
-            	                                                                eepromConfig.gyroTCBiasIntercept[YAW  ]);
-            	cliPrintF("Mag Bias:                  %9.4f, %9.4f, %9.4f\n",   eepromConfig.magBias[XAXIS],
-                                                		                        eepromConfig.magBias[YAXIS],
-                                                		                        eepromConfig.magBias[ZAXIS]);
+           		cliPrintF("Accel Scale Factor:        %9.4f, %9.4f, %9.4f\n", eepromConfig.accelScaleFactor[XAXIS],
+                                               		                          eepromConfig.accelScaleFactor[YAXIS],
+                                               		                          eepromConfig.accelScaleFactor[ZAXIS]);
+                cliPrintF("Accel Bias:                %9.4f, %9.4f, %9.4f\n", eepromConfig.accelBias[XAXIS],
+                                               		                          eepromConfig.accelBias[YAXIS],
+                                               		                          eepromConfig.accelBias[ZAXIS]);
+                cliPrintF("Gyro Temp Comp Slope:      %9.4f, %9.4f, %9.4f\n", eepromConfig.gyroTCBiasSlope[ROLL ],
+            	                                                              eepromConfig.gyroTCBiasSlope[PITCH],
+            	                                                              eepromConfig.gyroTCBiasSlope[YAW  ]);
+            	cliPrintF("Gyro Temp Comp Intercept:  %9.4f, %9.4f, %9.4f\n", eepromConfig.gyroTCBiasIntercept[ROLL ],
+            	                                                              eepromConfig.gyroTCBiasIntercept[PITCH],
+            	                                                              eepromConfig.gyroTCBiasIntercept[YAW  ]);
+            	cliPrintF("Mag Bias:                  %9.4f, %9.4f, %9.4f\n", eepromConfig.magBias[XAXIS],
+                                                		                      eepromConfig.magBias[YAXIS],
+                                                		                      eepromConfig.magBias[ZAXIS]);
                 cliPrintF("Accel One G:               %9.4f\n",   accelOneG);
                 cliPrintF("Accel Cutoff:              %9.4f\n",   eepromConfig.accelCutoff);
                 cliPrintF("KpAcc (MARG):              %9.4f\n",   eepromConfig.KpAcc);
@@ -167,12 +167,12 @@ void sensorCLI()
 
             case 'd': // Accel Calibration
             	if (eepromConfig.useMpu6050 == false)
-            	{
-            		adxl345Calibration();
+            	    accelCalibrationADXL345();
+            	else
+            	    accelCalibrationMPU();
 
-                    sensorQuery = 'a';
-                    validQuery = true;
-            	}
+                sensorQuery = 'a';
+                validQuery = true;
                 break;
 
             ///////////////////////////
@@ -352,12 +352,7 @@ void sensorCLI()
 
 			   	cliPrint("'b' MPU Calibration                        'B' Set Accel Cutoff                     BAccelCutoff\n");
 			   	cliPrint("'c' Magnetometer Calibration               'C' Set kpAcc/kiAcc                      CKpAcc;KiAcc\n");
-
-			   	if (eepromConfig.useMpu6050 == true)
-			   		cliPrint("                                           'D' Set kpMag/kiMag                      DKpMag;KiMag\n");
-			   	else
-			   		cliPrint("'d' ADXL345 Calibration                    'D' Set kpMag/kiMag                      DKpMag;KiMag\n");
-
+			   	cliPrint("'d' Accel Calibration                      'D' Set kpMag/kiMag                      DKpMag;KiMag\n");
 			   	cliPrint("                                           'E' Set h dot est/h est Comp Filter A/B  EA;B\n");
 			   	cliPrint("'m' Toggle MPU3050/MPU6050\n");
 			   	cliPrint("                                           'N' Set Voltage Monitor Trip Points      Nlow;veryLow;maxLow\n");

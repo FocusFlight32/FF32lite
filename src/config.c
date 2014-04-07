@@ -37,7 +37,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 const char rcChannelLetters[] = "AERT1234";
 
-static uint8_t checkNewEEPROMConf = 5;
+static uint8_t checkNewEEPROMConf = 6;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -410,6 +410,7 @@ void checkFirstTime(bool eepromReset)
         eepromConfig.disarmCount          =  0;
 
         eepromConfig.activeTelemetry      =  0;
+        eepromConfig.mavlinkEnabled       =  false;
 
     	eepromConfig.verticalVelocityHoldOnly = true;
 

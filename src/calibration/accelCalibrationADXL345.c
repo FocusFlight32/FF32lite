@@ -35,20 +35,16 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 // Accelerometer Calibration
 ///////////////////////////////////////////////////////////////////////////////
 
-void adxl345Calibration(void)
+void accelCalibrationADXL345(void)
 {
-    float noseUp = 0.0f;
-    float noseDown = 0.0f;
-    float leftWingDown = 0.0f;
+    float noseUp        = 0.0f;
+    float noseDown      = 0.0f;
+    float leftWingDown  = 0.0f;
     float rightWingDown = 0.0f;
-    float upSideDown = 0.0f;
-    float rightSideUp = 0.0f;
+    float upSideDown    = 0.0f;
+    float rightSideUp   = 0.0f;
 
     int16_t index;
-
-    uint8_t temp;
-
-    adxl345Calibrating = true;
 
     cliPrint("\nAccelerometer Calibration:\n\n");
 
@@ -58,8 +54,7 @@ void adxl345Calibration(void)
     cliPrint("  Send a character when ready to proceed\n\n");
 
     while (cliAvailable() == false);
-
-    temp = cliRead();
+    cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
@@ -74,9 +69,8 @@ void adxl345Calibration(void)
     cliPrint("Place accelerometer up side down\n");
     cliPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliAvailable() == false);
+    cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
@@ -88,18 +82,13 @@ void adxl345Calibration(void)
 
     upSideDown /= 5000.0f;
 
-    eepromConfig.accelBias[ZAXIS] = (rightSideUp + upSideDown) / 2.0f;
-
-    eepromConfig.accelScaleFactor[ZAXIS] = (2.0f * 9.8065f) / (fabs(rightSideUp) + fabs(upSideDown));
-
     ///////////////////////////////////
 
     cliPrint("Place accelerometer left edge down\n");
     cliPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliAvailable() == false);
+    cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
@@ -114,9 +103,8 @@ void adxl345Calibration(void)
     cliPrint("Place accelerometer right edge down\n");
     cliPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliAvailable() == false);
+    cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
@@ -128,18 +116,13 @@ void adxl345Calibration(void)
 
     rightWingDown /= 5000.0f;
 
-    eepromConfig.accelBias[YAXIS] = (leftWingDown + rightWingDown) / 2.0f;
-
-    eepromConfig.accelScaleFactor[YAXIS] = (2.0f * 9.8065f) / (fabs(leftWingDown) + fabs(rightWingDown));
-
     ///////////////////////////////////
 
     cliPrint("Place accelerometer rear edge down\n");
     cliPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliAvailable() == false);
+    cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
@@ -155,8 +138,7 @@ void adxl345Calibration(void)
     cliPrint("  Send a character when ready to proceed\n\n");
 
     while (cliAvailable() == false);
-
-    temp = cliRead();
+    cliRead();
 
     cliPrint("  Gathering Data...\n\n");
 
@@ -168,11 +150,20 @@ void adxl345Calibration(void)
 
     noseDown /= 5000.0f;
 
-    eepromConfig.accelBias[XAXIS] = (noseUp + noseDown) / 2.0f;
+    ///////////////////////////////////
 
-    eepromConfig.accelScaleFactor[XAXIS] = (2.0f * 9.8065f) / (fabs(noseUp) + fabs(noseDown));
+    eepromConfig.accelBias[ZAXIS]        = (rightSideUp + upSideDown) / 2.0f;
+    eepromConfig.accelScaleFactor[ZAXIS] = (2.0f * 9.8065f) / fabsf(rightSideUp - upSideDown);
 
-    adxl345Calibrating = false;
+    eepromConfig.accelBias[YAXIS]        = (leftWingDown + rightWingDown) / 2.0f;
+    eepromConfig.accelScaleFactor[YAXIS] = (2.0f * 9.8065f) / fabsf(leftWingDown - rightWingDown);
+
+    eepromConfig.accelBias[XAXIS]        = (noseUp + noseDown) / 2.0f;
+    eepromConfig.accelScaleFactor[XAXIS] = (2.0f * 9.8065f) / fabsf(noseUp - noseDown);
+
+    ///////////////////////////////////
+
+    accelCalibrating = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

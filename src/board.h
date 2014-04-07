@@ -46,6 +46,8 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 
+#include "mavlink.h"
+
 ///////////////////////////////////////
 
 #include "pid.h"
@@ -72,7 +74,8 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "mpu6050.h"
 #include "ms5611.h"
 
-#include "adxl345Calibration.h"
+#include "accelCalibrationADXL345.h"
+#include "accelCalibrationMPU.h"
 #include "batMon.h"
 #include "cli.h"
 #include "computeAxisCommands.h"
@@ -83,6 +86,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "firstOrderFilter.h"
 #include "flightCommand.h"
 #include "magCalibration.h"
+#include "mavlinkStrings.h"
 #include "MargAHRS.h"
 #include "mixer.h"
 #include "mpu3050Calibration.h"
