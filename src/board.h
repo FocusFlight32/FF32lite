@@ -52,10 +52,9 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 #include "pid.h"
 
-#include "ff32_Naze32.h"
+#include "ff32Lite.h"
 
 #include "drv_adc.h"
-#include "drv_cli.h"
 #include "drv_crc.h"
 #include "drv_gpio.h"
 #include "drv_i2c.h"
@@ -64,6 +63,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "drv_pwmServo.h"
 #include "drv_spektrum.h"
 #include "drv_system.h"
+#include "drv_uart1.h"
 
 #include "sensorCommon.h"
 

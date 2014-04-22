@@ -33,6 +33,10 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void (*mavlinkPortPrintBinary)(uint8_t *buf, uint16_t length);
+
+///////////////////////////////////////
+
 mavlink_system_t mavlink_system;
 
 // Define the system type variables
@@ -85,7 +89,7 @@ void mavlinkSendAttitude(void)
 	// Copy the message to the send buffer
 	length = mavlink_msg_to_send_buffer(buffer, &msg);
 
-    cliPrintBinary(buffer, length);
+    mavlinkPortPrintBinary(buffer, length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -104,7 +108,7 @@ void mavlinkSendHeartbeat(void)
 	// Copy the message to the send buffer
 	length = mavlink_msg_to_send_buffer(buffer, &msg);
 
-	cliPrintBinary(buffer, length);
+	mavlinkPortPrintBinary(buffer, length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -141,7 +145,7 @@ void mavlinkSendSysStatus(void)
 	// Copy the message to the send buffer
     length = mavlink_msg_to_send_buffer(buffer, &msg);
 
-    cliPrintBinary(buffer, length);
+    mavlinkPortPrintBinary(buffer, length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -161,7 +165,7 @@ void mavlinkSendVfrHud(void)
 	// Copy the message to the send buffer
     length = mavlink_msg_to_send_buffer(buffer, &msg);
 
-    cliPrintBinary(buffer, length);
+    mavlinkPortPrintBinary(buffer, length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

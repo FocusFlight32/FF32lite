@@ -54,13 +54,13 @@ void mpu6050Calibration(void)
 
     mpuCalibrating = true;
 
-    cliPrintF("\nMPU6050 Calibration:\n");
+    cliPortPrintF("\nMPU6050 Calibration:\n");
 
     ///////////////////////////////////
     // Get samples at temperature1
     ///////////////////////////////////
 
-    cliPrintF("\nBegin 1st MPU6050 Measurements...\n");
+    cliPortPrintF("\nBegin 1st MPU6050 Measurements...\n");
 
     for (index = 0; index < numberOfSamples; index++)
     {
@@ -87,23 +87,23 @@ void mpu6050Calibration(void)
     gyroBias1[YAW  ]    /= (float) numberOfSamples;
     mpu6050Temperature1 /= (float) numberOfSamples;
 
-    cliPrintF("\nGyro Temperature Reading: %6.2f", mpu6050Temperature1);
+    cliPortPrintF("\nGyro Temperature Reading: %6.2f", mpu6050Temperature1);
 
-    cliPrintF("\n\nEnd 1st MPU6050 Measurements\n");
+    cliPortPrintF("\n\nEnd 1st MPU6050 Measurements\n");
 
     ///////////////////////////////////
     // Time delay for temperature
     // Stabilization
     ///////////////////////////////////
 
-    cliPrintF("\nWaiting for 10 minutes for MPU6050 temp to rise...\n");
+    cliPortPrintF("\nWaiting for 10 minutes for MPU6050 temp to rise...\n");
     delay(600000);    // Number of mSec in 10 minutes
 
     ///////////////////////////////////
     // Get samples at temperature2
     ///////////////////////////////////
 
-    cliPrintF("\nBegin 2nd MPU6050 Measurements...\n");
+    cliPortPrintF("\nBegin 2nd MPU6050 Measurements...\n");
 
     for (index = 0; index < numberOfSamples; index++)
     {
@@ -130,9 +130,9 @@ void mpu6050Calibration(void)
     gyroBias2[YAW  ]    /= (float) numberOfSamples;
     mpu6050Temperature2 /= (float) numberOfSamples;
 
-    cliPrintF("\nGyro Temperature Reading: %6.2f", mpu6050Temperature2);
+    cliPortPrintF("\nGyro Temperature Reading: %6.2f", mpu6050Temperature2);
 
-    cliPrintF("\n\nEnd 2st MPU6050 Measurements\n");
+    cliPortPrintF("\n\nEnd 2st MPU6050 Measurements\n");
 
     ///////////////////////////////////
 
@@ -154,7 +154,7 @@ void mpu6050Calibration(void)
 
     ///////////////////////////////////
 
-    cliPrintF("\nMPU6050 Calibration Complete.\n\n");
+    cliPortPrintF("\nMPU6050 Calibration Complete.\n\n");
 
     mpuCalibrating = false;
 }

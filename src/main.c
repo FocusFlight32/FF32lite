@@ -41,6 +41,8 @@ sensors_t      sensors;
 
 homeData_t     homeData;
 
+void           (*telemPortPrintF)(const char * fmt, ...);
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main(void)
@@ -225,45 +227,45 @@ int main(void)
 				if ( eepromConfig.activeTelemetry == 1 )
                 {
             	    // 500 Hz Accels
-            	    cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.accel500Hz[XAXIS],
-            	            	                       sensors.accel500Hz[YAXIS],
-            	            			               sensors.accel500Hz[ZAXIS]);
+            	    telemPortPrintF("%9.4f, %9.4f, %9.4f\n", sensors.accel500Hz[XAXIS],
+            	            	                             sensors.accel500Hz[YAXIS],
+            	            			                     sensors.accel500Hz[ZAXIS]);
                 }
 
                 if ( eepromConfig.activeTelemetry == 2 )
                 {
             	    // 500 Hz Gyros
-            	    cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.gyro500Hz[ROLL ],
-            	            			               sensors.gyro500Hz[PITCH],
-            	            					       sensors.gyro500Hz[YAW  ]);
+            	    telemPortPrintF("%9.4f, %9.4f, %9.4f\n", sensors.gyro500Hz[ROLL ],
+            	            			                     sensors.gyro500Hz[PITCH],
+            	            					             sensors.gyro500Hz[YAW  ]);
                 }
 
                 if ( eepromConfig.activeTelemetry == 4 )
                 {
             	    // 500 Hz Attitudes
-            	    cliPrintF("%9.4f, %9.4f, %9.4f\n", sensors.attitude500Hz[ROLL ],
-            	            			               sensors.attitude500Hz[PITCH],
-            	            			               sensors.attitude500Hz[YAW  ]);
+            	    telemPortPrintF("%9.4f, %9.4f, %9.4f\n", sensors.attitude500Hz[ROLL ],
+            	            			                     sensors.attitude500Hz[PITCH],
+            	            			                     sensors.attitude500Hz[YAW  ]);
                 }
 
                 if ( eepromConfig.activeTelemetry == 8 )
                 {
                	    // Vertical Variables
-            	    cliPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", earthAxisAccels[ZAXIS],
-            	    		                                  sensors.pressureAlt50Hz,
-            	    		                                  hDotEstimate,
-            	    		                                  hEstimate);
+            	    telemPortPrintF("%9.4f, %9.4f, %9.4f, %9.4f\n", earthAxisAccels[ZAXIS],
+            	    		                                        sensors.pressureAlt50Hz,
+            	    		                                        hDotEstimate,
+            	    		                                        hEstimate);
                 }
 
                 if ( eepromConfig.activeTelemetry == 16 )
                 {
                	    // Vertical Variables
-            	    cliPrintF("%9.4f, %9.4f, %9.4f,%1d, %9.4f, %9.4f\n", verticalVelocityCmd,
-            	    		                                             hDotEstimate,
-            	    		                                             hEstimate,
-            	    		                                             verticalModeState,
-            	    		                                             throttleCmd,
-            	    		                                             eepromConfig.PID[HDOT_PID].iTerm);
+            	    telemPortPrintF("%9.4f, %9.4f, %9.4f,%1d, %9.4f, %9.4f\n", verticalVelocityCmd,
+            	    		                                                   hDotEstimate,
+            	    		                                                   hEstimate,
+            	    		                                                   verticalModeState,
+            	    		                                                   throttleCmd,
+            	    		                                                   eepromConfig.PID[HDOT_PID].iTerm);
                 }
 
             }

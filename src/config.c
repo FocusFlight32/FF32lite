@@ -37,7 +37,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 const char rcChannelLetters[] = "AERT1234";
 
-static uint8_t checkNewEEPROMConf = 6;
+static uint8_t checkNewEEPROMConf = 7;
 
 ///////////////////////////////////////////////////////////////////////////////
 
