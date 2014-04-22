@@ -58,10 +58,6 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 #define DATA_RATE_1600      0x0E
 
-///////////////////////////////////
-
-uint8_t adxl345Calibrating = false;
-
 ///////////////////////////////////////////////////////////////////////////////
 // Compute ADXL345 Runtime Data
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +68,7 @@ void computeAdxl345RTData(void)
     uint16_t samples;
     float accelSum[3] = { 0.0f, 0.0f, 0.0f };
 
-    adxl345Calibrating = true;
+    accelCalibrating = true;
 
     for (samples = 0; samples < 2000; samples++)
     {
@@ -92,7 +88,7 @@ void computeAdxl345RTData(void)
 
     accelOneG = sqrt(SQR(accelSum[XAXIS]) + SQR(accelSum[YAXIS]) + SQR(accelSum[ZAXIS]));
 
-    adxl345Calibrating = false;
+    accelCalibrating = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

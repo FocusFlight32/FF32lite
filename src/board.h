@@ -46,14 +46,15 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 
+#include "mavlink.h"
+
 ///////////////////////////////////////
 
 #include "pid.h"
 
-#include "ff32_Naze32.h"
+#include "ff32Lite.h"
 
 #include "drv_adc.h"
-#include "drv_cli.h"
 #include "drv_crc.h"
 #include "drv_gpio.h"
 #include "drv_i2c.h"
@@ -62,6 +63,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "drv_pwmServo.h"
 #include "drv_spektrum.h"
 #include "drv_system.h"
+#include "drv_uart1.h"
 
 #include "sensorCommon.h"
 
@@ -72,7 +74,8 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "mpu6050.h"
 #include "ms5611.h"
 
-#include "adxl345Calibration.h"
+#include "accelCalibrationADXL345.h"
+#include "accelCalibrationMPU.h"
 #include "batMon.h"
 #include "cli.h"
 #include "computeAxisCommands.h"
@@ -83,6 +86,7 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 #include "firstOrderFilter.h"
 #include "flightCommand.h"
 #include "magCalibration.h"
+#include "mavlinkStrings.h"
 #include "MargAHRS.h"
 #include "mixer.h"
 #include "mpu3050Calibration.h"
