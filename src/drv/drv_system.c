@@ -108,7 +108,7 @@ void SysTick_Handler(void)
 
     if ((systemReady        == true ) &&
     	(cliBusy            == false) &&
-    	(adxl345Calibrating == false) &&
+    	(accelCalibrating   == false) &&
     	(escCalibrating     == false) &&
     	(magCalibrating     == false) &&
     	(mpuCalibrating     == false))
@@ -277,19 +277,27 @@ void systemInit(void)
     SysTick_Config(SystemCoreClock / 1000);
 
     // Turn on peripherial clocks
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,   ENABLE);
+
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1,     ENABLE);
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA2,     ENABLE);
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,  ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,  ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,  ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,   ENABLE);
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2,   ENABLE);
+
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,   ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,   ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,   ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,   ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,   ENABLE);
+
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2,   ENABLE);
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1,     ENABLE);
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA2,     ENABLE);
 
-    ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
     checkFirstTime(false);
 	readEEPROM();
@@ -303,7 +311,25 @@ void systemInit(void)
 
 	initMixer();
 
-    cliInit(115200);
+	///////////////////////////////////
+
+	cliPortAvailable         = &uart1Available;
+	cliPortPrint             = &uart1Print;
+	cliPortPrintF            = &uart1PrintF;
+	cliPortRead              = &uart1Read;
+
+    //gpsPortClearBuffer       = &uart2ClearBuffer;
+    //gpsPortNumCharsAvailable = &uart2NumCharsAvailable;
+    //gpsPortPrintBinary       = &uart2PrintBinary;
+    //gpsPortRead              = &uart2Read;
+
+	mavlinkPortPrintBinary   = &uart1PrintBinary;
+
+	telemPortPrintF          = &uart1PrintF;
+
+	///////////////////////////////////
+
+	uart1Init(115200);
     gpioInit();
     adcInit();
 
@@ -312,42 +338,42 @@ void systemInit(void)
     delay(10000);  // 10 seconds of 20 second delay for sensor stabilization
 
     #ifdef __VERSION__
-        cliPrintF("\ngcc version " __VERSION__ "\n");
+        cliPortPrintF("\ngcc version " __VERSION__ "\n");
     #endif
 
-    cliPrintF("\nFF32lite Firmware V%s, Build Date " __DATE__ " "__TIME__" \n", __FF32LITE_VERSION);
+    cliPortPrintF("\nFF32lite Firmware V%s, Build Date " __DATE__ " "__TIME__" \n", __FF32LITE_VERSION);
 
     if ((RCC->CR & RCC_CR_HSERDY) != RESET)
     {
-        cliPrint("\nRunning on external HSE clock....\n");
+        cliPortPrint("\nRunning on external HSE clock....\n");
     }
     else
     {
-        cliPrint("\nERROR: Running on internal HSI clock....\n");
+        cliPortPrint("\nERROR: Running on internal HSI clock....\n");
     }
 
     RCC_GetClocksFreq(&rccClocks);
 
-    cliPrintF("\nADCCLK-> %2d MHz\n",   rccClocks.ADCCLK_Frequency / 1000000);
-    cliPrintF(  "HCLK->   %2d MHz\n",   rccClocks.HCLK_Frequency   / 1000000);
-    cliPrintF(  "PCLK1->  %2d MHz\n",   rccClocks.PCLK1_Frequency  / 1000000);
-    cliPrintF(  "PCLK2->  %2d MHz\n",   rccClocks.PCLK2_Frequency  / 1000000);
-    cliPrintF(  "SYSCLK-> %2d MHz\n\n", rccClocks.SYSCLK_Frequency / 1000000);
+    cliPortPrintF("\nADCCLK-> %2d MHz\n",   rccClocks.ADCCLK_Frequency / 1000000);
+    cliPortPrintF(  "HCLK->   %2d MHz\n",   rccClocks.HCLK_Frequency   / 1000000);
+    cliPortPrintF(  "PCLK1->  %2d MHz\n",   rccClocks.PCLK1_Frequency  / 1000000);
+    cliPortPrintF(  "PCLK2->  %2d MHz\n",   rccClocks.PCLK2_Frequency  / 1000000);
+    cliPortPrintF(  "SYSCLK-> %2d MHz\n\n", rccClocks.SYSCLK_Frequency / 1000000);
 
     if (eepromConfig.useMpu6050 == true)
-    	cliPrint("Using MPU6050....\n\n");
+    	cliPortPrint("Using MPU6050....\n\n");
     else
-    	cliPrint("Using ADXL345/MPU3050....\n\n");
+    	cliPortPrint("Using ADXL345/MPU3050....\n\n");
 
     if (eepromConfig.useMs5611 == true)
-    	cliPrint("Using MS5611....\n\n");
+    	cliPortPrint("Using MS5611....\n\n");
     else
-    	cliPrint("Using BMP085....\n\n");
+    	cliPortPrint("Using BMP085....\n\n");
 
     if (eepromConfig.receiverType == PPM)
-    	cliPrint("Using PPM Receiver....\n\n");
+    	cliPortPrint("Using PPM Receiver....\n\n");
     else
-    	cliPrint("Using Spektrum Satellite Receiver....\n\n");
+    	cliPortPrint("Using Spektrum Satellite Receiver....\n\n");
 
     delay(10000);  // Remaining 10 seconds of 20 second delay for sensor stabilization - probably not long enough..
 

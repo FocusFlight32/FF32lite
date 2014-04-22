@@ -50,13 +50,13 @@ void mpu3050Calibration(void)
 
     mpuCalibrating = true;
 
-    cliPrint("\nGyro Temperature Calibration:\n");
+    cliPortPrint("\nGyro Temperature Calibration:\n");
 
     ///////////////////////////////////
     // Get samples at temperature1
     ///////////////////////////////////
 
-    cliPrint("\nBegin 1st Gyro Measurements...\n");
+    cliPortPrint("\nBegin 1st Gyro Measurements...\n");
     for (index = 0; index < numberOfSamples; index++)
     {
         readMpu3050();
@@ -74,23 +74,23 @@ void mpu3050Calibration(void)
     gyroBias1[YAW]      /= (float) numberOfSamples;
     mpu3050Temperature1 /= (float) numberOfSamples;
 
-    cliPrintF("\nGyro Temperature Reading: %6.2f", mpu3050Temperature1);
+    cliPortPrintF("\nGyro Temperature Reading: %6.2f", mpu3050Temperature1);
 
-    cliPrint("\n\nEnd 1st Gyro Measurements\n");
+    cliPortPrint("\n\nEnd 1st Gyro Measurements\n");
 
     ///////////////////////////////////
     // Time delay for temperature
     // Stabilizaiton
     ///////////////////////////////////
 
-    cliPrint("\nWaiting for 10 minutes for gyro temp to rise...\n");
+    cliPortPrint("\nWaiting for 10 minutes for gyro temp to rise...\n");
     delay(600000);              // Number of mSec in 10 minutes
 
     ///////////////////////////////////
     // Get samples at temperature2
     ///////////////////////////////////
 
-    cliPrint("\nBegin 2nd Gyro Measurements...\n");
+    cliPortPrint("\nBegin 2nd Gyro Measurements...\n");
     for (index = 0; index < numberOfSamples; index++)
     {
         readMpu3050();
@@ -108,9 +108,9 @@ void mpu3050Calibration(void)
     gyroBias2[YAW  ]    /= (float) numberOfSamples;
     mpu3050Temperature2 /= (float) numberOfSamples;
 
-    cliPrintF("\nGyro Temperature Reading: %6.2f", mpu3050Temperature2);
+    cliPortPrintF("\nGyro Temperature Reading: %6.2f", mpu3050Temperature2);
 
-    cliPrint("\n\nEnd 2nd Gyro Measurements\n");
+    cliPortPrint("\n\nEnd 2nd Gyro Measurements\n");
 
     eepromConfig.gyroTCBiasSlope[ROLL ] = (gyroBias2[ROLL ] - gyroBias1[ROLL ]) / (mpu3050Temperature2 - mpu3050Temperature1);
     eepromConfig.gyroTCBiasSlope[PITCH] = (gyroBias2[PITCH] - gyroBias1[PITCH]) / (mpu3050Temperature2 - mpu3050Temperature1);

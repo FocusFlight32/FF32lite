@@ -33,6 +33,16 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
+extern uint32_t (*cliPortAvailable)(void);
+
+extern uint8_t  (*cliPortRead)(void);
+
+extern void     (*cliPortPrint)(char *str);
+
+extern void     (*cliPortPrintF)(const char * fmt, ...);
+
+///////////////////////////////////////
+
 extern uint8_t cliBusy;
 
 ///////////////////////////////////////////////////////////////////////////////

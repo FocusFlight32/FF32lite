@@ -33,6 +33,10 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 
 ///////////////////////////////////////////////////////////////////////////////
 
+extern void (*telemPortPrintF)(const char * fmt, ...);
+
+///////////////////////////////////////////////////////////////////////////////
+
 #define __FF32LITE_VERSION "1.0"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,7 +104,8 @@ typedef volatile uint8_t semaphore_t;
 // Sensor Variables
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef struct sensors_t {
+typedef struct sensors_t
+{
     float accel500Hz[3];
     float accel100Hz[3];
     float attitude500Hz[3];
@@ -110,6 +115,13 @@ typedef struct sensors_t {
 } sensors_t;
 
 extern sensors_t sensors;
+
+typedef struct homeData_t
+{
+	float   magHeading;
+} homeData_t;
+
+extern homeData_t homeData;
 
 ///////////////////////////////////////////////////////////////////////////////
 // PID Definitions
@@ -270,6 +282,8 @@ typedef struct eepromConfig_t
     ///////////////////////////////////
 
     uint16_t activeTelemetry;
+
+    uint8_t  mavlinkEnabled;
 
 	///////////////////////////////////
 

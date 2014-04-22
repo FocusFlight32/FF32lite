@@ -35,33 +35,28 @@ along with FF32lite. If not, see <http://www.gnu.org/licenses/>.
 // Accelerometer Calibration
 ///////////////////////////////////////////////////////////////////////////////
 
-void adxl345Calibration(void)
+void accelCalibrationADXL345(void)
 {
-    float noseUp = 0.0f;
-    float noseDown = 0.0f;
-    float leftWingDown = 0.0f;
+    float noseUp        = 0.0f;
+    float noseDown      = 0.0f;
+    float leftWingDown  = 0.0f;
     float rightWingDown = 0.0f;
-    float upSideDown = 0.0f;
-    float rightSideUp = 0.0f;
+    float upSideDown    = 0.0f;
+    float rightSideUp   = 0.0f;
 
     int16_t index;
 
-    uint8_t temp;
-
-    adxl345Calibrating = true;
-
-    cliPrint("\nAccelerometer Calibration:\n\n");
+    cliPortPrint("\nAccelerometer Calibration:\n\n");
 
     ///////////////////////////////////
 
-    cliPrint("Place accelerometer right side up\n");
-    cliPrint("  Send a character when ready to proceed\n\n");
+    cliPortPrint("Place accelerometer right side up\n");
+    cliPortPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false);
+    while (cliPortAvailable() == false);
+    cliPortRead();
 
-    temp = cliRead();
-
-    cliPrint("  Gathering Data...\n\n");
+    cliPortPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
         readAdxl345();
@@ -71,14 +66,13 @@ void adxl345Calibration(void)
 
     rightSideUp /= 5000.0f;
 
-    cliPrint("Place accelerometer up side down\n");
-    cliPrint("  Send a character when ready to proceed\n\n");
+    cliPortPrint("Place accelerometer up side down\n");
+    cliPortPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliPortAvailable() == false);
+    cliPortRead();
 
-    cliPrint("  Gathering Data...\n\n");
+    cliPortPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
         readAdxl345();
@@ -88,20 +82,15 @@ void adxl345Calibration(void)
 
     upSideDown /= 5000.0f;
 
-    eepromConfig.accelBias[ZAXIS] = (rightSideUp + upSideDown) / 2.0f;
-
-    eepromConfig.accelScaleFactor[ZAXIS] = (2.0f * 9.8065f) / (fabs(rightSideUp) + fabs(upSideDown));
-
     ///////////////////////////////////
 
-    cliPrint("Place accelerometer left edge down\n");
-    cliPrint("  Send a character when ready to proceed\n\n");
+    cliPortPrint("Place accelerometer left edge down\n");
+    cliPortPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliPortAvailable() == false);
+    cliPortRead();
 
-    cliPrint("  Gathering Data...\n\n");
+    cliPortPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
         readAdxl345();
@@ -111,14 +100,13 @@ void adxl345Calibration(void)
 
     leftWingDown /= 5000.0f;
 
-    cliPrint("Place accelerometer right edge down\n");
-    cliPrint("  Send a character when ready to proceed\n\n");
+    cliPortPrint("Place accelerometer right edge down\n");
+    cliPortPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliPortAvailable() == false);
+    cliPortRead();
 
-    cliPrint("  Gathering Data...\n\n");
+    cliPortPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
         readAdxl345();
@@ -128,20 +116,15 @@ void adxl345Calibration(void)
 
     rightWingDown /= 5000.0f;
 
-    eepromConfig.accelBias[YAXIS] = (leftWingDown + rightWingDown) / 2.0f;
-
-    eepromConfig.accelScaleFactor[YAXIS] = (2.0f * 9.8065f) / (fabs(leftWingDown) + fabs(rightWingDown));
-
     ///////////////////////////////////
 
-    cliPrint("Place accelerometer rear edge down\n");
-    cliPrint("  Send a character when ready to proceed\n\n");
+    cliPortPrint("Place accelerometer rear edge down\n");
+    cliPortPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false) {
-    };
-    temp = cliRead();
+    while (cliPortAvailable() == false);
+    cliPortRead();
 
-    cliPrint("  Gathering Data...\n\n");
+    cliPortPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
         readAdxl345();
@@ -151,14 +134,13 @@ void adxl345Calibration(void)
 
     noseUp /= 5000.0f;
 
-    cliPrint("Place accelerometer front edge down\n");
-    cliPrint("  Send a character when ready to proceed\n\n");
+    cliPortPrint("Place accelerometer front edge down\n");
+    cliPortPrint("  Send a character when ready to proceed\n\n");
 
-    while (cliAvailable() == false);
+    while (cliPortAvailable() == false);
+    cliPortRead();
 
-    temp = cliRead();
-
-    cliPrint("  Gathering Data...\n\n");
+    cliPortPrint("  Gathering Data...\n\n");
 
     for (index = 0; index < 5000; index++) {
         readAdxl345();
@@ -168,11 +150,20 @@ void adxl345Calibration(void)
 
     noseDown /= 5000.0f;
 
-    eepromConfig.accelBias[XAXIS] = (noseUp + noseDown) / 2.0f;
+    ///////////////////////////////////
 
-    eepromConfig.accelScaleFactor[XAXIS] = (2.0f * 9.8065f) / (fabs(noseUp) + fabs(noseDown));
+    eepromConfig.accelBias[ZAXIS]        = (rightSideUp + upSideDown) / 2.0f;
+    eepromConfig.accelScaleFactor[ZAXIS] = (2.0f * 9.8065f) / fabsf(rightSideUp - upSideDown);
 
-    adxl345Calibrating = false;
+    eepromConfig.accelBias[YAXIS]        = (leftWingDown + rightWingDown) / 2.0f;
+    eepromConfig.accelScaleFactor[YAXIS] = (2.0f * 9.8065f) / fabsf(leftWingDown - rightWingDown);
+
+    eepromConfig.accelBias[XAXIS]        = (noseUp + noseDown) / 2.0f;
+    eepromConfig.accelScaleFactor[XAXIS] = (2.0f * 9.8065f) / fabsf(noseUp - noseDown);
+
+    ///////////////////////////////////
+
+    accelCalibrating = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

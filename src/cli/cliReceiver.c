@@ -47,67 +47,67 @@ void receiverCLI()
 
     cliBusy = true;
 
-    cliPrint("\nEntering Receiver CLI....\n\n");
+    cliPortPrint("\nEntering Receiver CLI....\n\n");
 
     while(true)
     {
-        cliPrint("Receiver CLI -> ");
+        cliPortPrint("Receiver CLI -> ");
 
-		while ((cliAvailable() == false) && (validQuery == false));
+		while ((cliPortAvailable() == false) && (validQuery == false));
 
 		if (validQuery == false)
-		    receiverQuery = cliRead();
+		    receiverQuery = cliPortRead();
 
-		cliPrint("\n");
+		cliPortPrint("\n");
 
 		switch(receiverQuery)
 		{
             ///////////////////////////
 
             case 'a': // Receiver Configuration
-                cliPrint("\nReceiver Type:                  ");
+                cliPortPrint("\nReceiver Type:                  ");
                 switch(eepromConfig.receiverType)
                 {
                     case PPM:
-                        cliPrint("PPM\n");
+                        cliPortPrint("PPM\n");
                         break;
                     case SPEKTRUM:
-                        cliPrint("Spektrum\n");
+                        cliPortPrint("Spektrum\n");
                         break;
 		        }
 
-                cliPrint("Current RC Channel Assignment:  ");
+                cliPortPrint("Current RC Channel Assignment:  ");
                 for (index = 0; index < 8; index++)
                     rcOrderString[eepromConfig.rcMap[index]] = rcChannelLetters[index];
 
                 rcOrderString[index] = '\0';
 
-                cliPrint(rcOrderString);  cliPrint("\n");
+                cliPortPrint(rcOrderString);  cliPortPrint("\n");
 
-                cliPrintF("Secondary Spektrum:             ");
+                cliPortPrintF("Secondary Spektrum:             ");
 
                 if ((eepromConfig.slaveSpektrum == true) && false)  // HJI Inhibit Slave Spektrum on Naze32 Pro
-                    cliPrintF("Installed\n");
+                    cliPortPrintF("Installed\n");
                 else
-                    cliPrintF("Uninstalled\n");
+                    cliPortPrintF("Uninstalled\n");
 
-                cliPrintF("Mid Command:                    %4ld\n",   (uint16_t)eepromConfig.midCommand);
-				cliPrintF("Min Check:                      %4ld\n",   (uint16_t)eepromConfig.minCheck);
-				cliPrintF("Max Check:                      %4ld\n",   (uint16_t)eepromConfig.maxCheck);
-				cliPrintF("Min Throttle:                   %4ld\n",   (uint16_t)eepromConfig.minThrottle);
-				cliPrintF("Max Thottle:                    %4ld\n\n", (uint16_t)eepromConfig.maxThrottle);
+                cliPortPrintF("Mid Command:                    %4ld\n",   (uint16_t)eepromConfig.midCommand);
+				cliPortPrintF("Min Check:                      %4ld\n",   (uint16_t)eepromConfig.minCheck);
+				cliPortPrintF("Max Check:                      %4ld\n",   (uint16_t)eepromConfig.maxCheck);
+				cliPortPrintF("Min Throttle:                   %4ld\n",   (uint16_t)eepromConfig.minThrottle);
+				cliPortPrintF("Max Thottle:                    %4ld\n\n", (uint16_t)eepromConfig.maxThrottle);
 
 				tempFloat = eepromConfig.rollAndPitchRateScaling * 180000.0 / PI;
-				cliPrintF("Max Roll and Pitch Rate Cmd:    %6.2f DPS\n", tempFloat);
+				cliPortPrintF("Max Roll and Pitch Rate Cmd:    %6.2f DPS\n", tempFloat);
 
 				tempFloat = eepromConfig.yawRateScaling * 180000.0 / PI;
-				cliPrintF("Max Yaw Rate Cmd:               %6.2f DPS\n", tempFloat);
+				cliPortPrintF("Max Yaw Rate Cmd:               %6.2f DPS\n", tempFloat);
 
 				tempFloat = eepromConfig.attitudeScaling * 180000.0 / PI;
-                cliPrintF("Max Attitude Cmd:               %6.2f Degrees\n\n", tempFloat);
+                cliPortPrintF("Max Attitude Cmd:               %6.2f Degrees\n\n", tempFloat);
 
-				cliPrintF("Arm Delay Count:                %3d Frames\n",   eepromConfig.armCount);
-				cliPrintF("Disarm Delay Count:             %3d Frames\n\n", eepromConfig.disarmCount);
+				cliPortPrintF("Arm Delay Count:                %3d Frames\n",   eepromConfig.armCount);
+				cliPortPrintF("Disarm Delay Count:             %3d Frames\n\n", eepromConfig.disarmCount);
 
 				validQuery = false;
 				break;
@@ -115,7 +115,7 @@ void receiverCLI()
             ///////////////////////////
 
 			case 'x':
-			    cliPrint("\nExiting Receiver CLI....\n\n");
+			    cliPortPrint("\nExiting Receiver CLI....\n\n");
 			    cliBusy = false;
 			    return;
 			    break;
@@ -214,25 +214,25 @@ void receiverCLI()
             ///////////////////////////
 
             case 'W': // Write EEPROM Parameters
-                cliPrint("\nWriting EEPROM Parameters....\n\n");
+                cliPortPrint("\nWriting EEPROM Parameters....\n\n");
                 writeEEPROM();
 
-                validQuery - false;
+                validQuery = false;
                 break;
 
 			///////////////////////////
 
 			case '?':
-			   	cliPrint("\n");
-			   	cliPrint("'a' Receiver Configuration Data            'A' Toggle PPM/Spektrum Receiver\n");
-   		        cliPrint("                                           'B' Set RC Control Order                 BTAER1234\n");
-			   	cliPrint("                                           'D' Set RC Control Points                DmidCmd;minChk;maxChk;minThrot;maxThrot\n");
-			   	cliPrint("                                           'E' Set Arm/Disarm Counts                EarmCount;disarmCount\n");
-			   	cliPrint("                                           'F' Set Maximum Rate Commands            FRP;Y RP = Roll/Pitch, Y = Yaw\n");
-			   	cliPrint("                                           'G' Set Maximum Attitude Command\n");
-			   	cliPrint("                                           'W' Write EEPROM Parameters\n");
-			   	cliPrint("'x' Exit Receiver CLI                      '?' Command Summary\n");
-			   	cliPrint("\n");
+			   	cliPortPrint("\n");
+			   	cliPortPrint("'a' Receiver Configuration Data            'A' Toggle PPM/Spektrum Receiver\n");
+   		        cliPortPrint("                                           'B' Set RC Control Order                 BTAER1234\n");
+			   	cliPortPrint("                                           'D' Set RC Control Points                DmidCmd;minChk;maxChk;minThrot;maxThrot\n");
+			   	cliPortPrint("                                           'E' Set Arm/Disarm Counts                EarmCount;disarmCount\n");
+			   	cliPortPrint("                                           'F' Set Maximum Rate Commands            FRP;Y RP = Roll/Pitch, Y = Yaw\n");
+			   	cliPortPrint("                                           'G' Set Maximum Attitude Command\n");
+			   	cliPortPrint("                                           'W' Write EEPROM Parameters\n");
+			   	cliPortPrint("'x' Exit Receiver CLI                      '?' Command Summary\n");
+			   	cliPortPrint("\n");
 	    	    break;
 
 	    	///////////////////////////
